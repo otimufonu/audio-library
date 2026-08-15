@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audio Library</title>
+</head>
+
+<body>
+
+<h1>Audio Library</h1>
+
+<p>Password</p>
+
+<input type="password" id="password">
+<button onclick="checkPassword()">ENTER</button>
+
+<p id="error"></p>
+
+<script>
+
+function checkPassword() {
+
+    const password = document.getElementById("password").value;
+
+    if (password === "TEST") {
+        window.location.href = "audio.html";
+    } else {
+        document.getElementById("error").textContent =
+        "Password is incorrect.";
+    }
+
+}
+
+</script>
+
+</body>
+</html>
