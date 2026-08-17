@@ -5,34 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Audio Library</title>
 </head>
-
 <body>
-
 <h1>う野文人</h1>
-
 <p>QRコードの下の文字列を入力してください</p>
-
 <input type="password" id="password">
 <button onclick="checkPassword()">ENTER</button>
-
 <p id="error"></p>
-
 <script>
-
 function checkPassword() {
-
     const password = document.getElementById("password").value;
-
     if (password === "074874") {
         window.location.href = "audio.html";
+    } else if (password === "442911") {
+        window.location.href = "shoufuku.html";
     } else {
         document.getElementById("error").textContent =
         "それじゃない！よくみて";
     }
-
 }
-
 </script>
-
 </body>
 </html>
