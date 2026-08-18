@@ -69,7 +69,8 @@ function checkPassword() {
     } else if (password === "442911") {
         window.location.href = "shoufuku.html";
     } else if (password === "000000") {
-        textContent = "そんなわけない";
+    document.getElementById("error").textContent =
+    "そんなわけない";
     } else {
         document.getElementById("error").textContent =
         "それじゃない！よくみて";
