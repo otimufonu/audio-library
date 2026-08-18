@@ -4,11 +4,53 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Audio Library</title>
+<style>
+body {
+    font-family: sans-serif;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 80px 20px;
+    text-align: center;
+    color: #222;
+}
+h1 {
+    font-weight: normal;
+    margin-bottom: 40px;
+}
+.description {
+    line-height: 1.8;
+    margin-bottom: 45px;
+}
+input {
+    width: 200px;
+    padding: 12px;
+    font-size: 18px;
+    box-sizing: border-box;
+    text-align: center;
+    margin-top: 10px;
+}
+button {
+    padding: 12px 22px;
+    font-size: 16px;
+    margin-left: 8px;
+    cursor: pointer;
+}
+#error {
+    margin-top: 25px;
+    min-height: 1.8em;
+}
+</style>
 </head>
 <body>
 <h1>う野文人</h1>
+<div class="description">
+<p>
+このページは、作品の音源をお楽しみいただくためのページです。<br>
+CDを再生できる環境がない方など、こちらからお楽しみください。
+</p>
+</div>
 <p>QRコードの下の文字列を入力してください</p>
-<input type="password" id="password">
+<input type="password" id="password" inputmode="numeric">
 <button onclick="checkPassword()">ENTER</button>
 <p id="error"></p>
 <script>
