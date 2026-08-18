@@ -49,8 +49,7 @@ button {
 </style>
 </head>
 <body>
-<h1>ようこそ
-</h1>
+<h1>ようこそ</h1>
 <div class="description">
 <p>
 このページは、作品の音源をお楽しみいただくためのページです。
@@ -62,58 +61,54 @@ button {
 <button onclick="checkPassword()">ENTER</button>
 <p id="error"></p>
 <script>
+let wrongCount = 0;
 function checkPassword() {
-
     const password = document.getElementById("password").value;
     const error = document.getElementById("error");
-
+    // 正解
     if (password === "074874") {
         window.location.href = "audio.html";
-
-    } else if (password === "442911") {
+        return;
+    }
+    // 招福来来ボーイ
+    if (password === "442911") {
         window.location.href = "shoufuku.html";
-
-    } else if (password === "843811") {
+        return;
+    }
+    // 丸美焼肉店
+    if (password === "843811") {
         window.location.href = "https://share.google/zcnrAHNT6O7MTd5ax";
-
-    } else if (password === "000000") {
+        return;
+    }
+    // ここまで来たらページ遷移しなかったのでカウント
+    wrongCount++;
+    // 000000はカウントしたうえで特別扱い
+    if (password === "000000") {
         error.textContent = "そんなわけない";
-
+        return;
+    }
+    // その他の入力
+    if (wrongCount === 4) {
+        error.textContent = "またちがうやん";
+    } else if (wrongCount === 5) {
+        error.textContent = "えっ？";
+    } else if (wrongCount === 6) {
+        error.textContent = "そろそろ…";
+    } else if (wrongCount === 7) {
+        error.textContent = "おちついて！";
+    } else if (wrongCount === 8) {
+        error.textContent = "ガンバレ、ガンバレ";
+    } else if (wrongCount === 9) {
+        error.textContent = "ほんとにCDみてる？";
+    } else if (wrongCount === 10) {
+        error.textContent = "教えてあげようか？";
+    } else if (wrongCount === 11) {
+        error.textContent = "じゃあ一つだけ。「843811」入力して";
+    } else if (wrongCount === 12) {
+        error.textContent = "……もう一回";
+        wrongCount = 0;
     } else {
-
-        wrongCount++;
-
-        if (wrongCount === 4) {
-            error.textContent = "またちがうやん";
-
-        } else if (wrongCount === 5) {
-            error.textContent = "えっ？";
-
-        } else if (wrongCount === 6) {
-            error.textContent = "そろそろ…";
-
-        } else if (wrongCount === 7) {
-            error.textContent = "おちついて！";
-
-        } else if (wrongCount === 8) {
-            error.textContent = "ガンバレ、ガンバレ";
-
-        } else if (wrongCount === 9) {
-            error.textContent = "ほんとにCDみてる？";
-
-        } else if (wrongCount === 10) {
-            error.textContent = "教えてあげようか？";
-
-        } else if (wrongCount === 11) {
-            error.textContent = "じゃあ一つだけ。「843811」入力して";
-
-        } else if (wrongCount === 12) {
-            error.textContent = "……もう一回";
-            wrongCount = 0;
-
-        } else {
-            error.textContent = "それじゃない！よくみて";
-        }
+        error.textContent = "それじゃない！よくみて";
     }
 }
 </script>
