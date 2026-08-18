@@ -63,17 +63,57 @@ button {
 <p id="error"></p>
 <script>
 function checkPassword() {
+
     const password = document.getElementById("password").value;
+    const error = document.getElementById("error");
+
     if (password === "074874") {
         window.location.href = "audio.html";
+
     } else if (password === "442911") {
         window.location.href = "shoufuku.html";
+
+    } else if (password === "843811") {
+        window.location.href = "丸美焼肉店のGoogleページURL";
+
     } else if (password === "000000") {
-    document.getElementById("error").textContent =
-    "そんなわけない";
+        error.textContent = "そんなわけない";
+
     } else {
-        document.getElementById("error").textContent =
-        "それじゃない！よくみて";
+
+        wrongCount++;
+
+        if (wrongCount === 4) {
+            error.textContent = "またちがうやん";
+
+        } else if (wrongCount === 5) {
+            error.textContent = "えっ？";
+
+        } else if (wrongCount === 6) {
+            error.textContent = "そろそろ…";
+
+        } else if (wrongCount === 7) {
+            error.textContent = "おちついて！";
+
+        } else if (wrongCount === 8) {
+            error.textContent = "ガンバレ、ガンバレ";
+
+        } else if (wrongCount === 9) {
+            error.textContent = "ほんとにCDみてる？";
+
+        } else if (wrongCount === 10) {
+            error.textContent = "教えてあげようか？";
+
+        } else if (wrongCount === 11) {
+            error.textContent = "じゃあ一つだけ。「843811」入力して";
+
+        } else if (wrongCount === 12) {
+            error.textContent = "……もう一回";
+            wrongCount = 0;
+
+        } else {
+            error.textContent = "それじゃない！よくみて";
+        }
     }
 }
 </script>
