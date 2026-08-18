@@ -84,7 +84,7 @@ function checkPassword() {
     wrongCount++;
     // 000000はカウントしたうえで特別扱い
     if (password === "000000") {
-        error.textContent = "そんなわけない";
+        error.textContent = "そんなわけない<br>※この画像は見本です。<br>CD側に記載されている<br>パスワードを入力してください。";
         return;
     }
     // その他の入力
