@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>数列クイズ</title>
+
+<style>
+body {
+    font-family: sans-serif;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 80px 20px;
+    text-align: center;
+    color: #222;
+}
+
+h1 {
+    font-weight: normal;
+    margin-bottom: 40px;
+}
+
+.description {
+    line-height: 1.8;
+    margin-bottom: 45px;
+}
+
+.question {
+    font-size: 24px;
+    letter-spacing: 4px;
+    margin: 40px 0;
+}
+
+input {
+    width: 200px;
+    padding: 12px;
+    font-size: 18px;
+    box-sizing: border-box;
+    text-align: center;
+    margin-top: 10px;
+}
+
+button {
+    padding: 12px 22px;
+    font-size: 16px;
+    margin-left: 8px;
+    cursor: pointer;
+}
+
+#result {
+    margin-top: 25px;
+    min-height: 1.8em;
+}
+
+#quit {
+    margin-top: 60px;
+}
+
+#quit button {
+    margin-left: 0;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>数列クイズ</h1>
+
+<div class="description">
+<p>
+次の数字に入るものを<br>
+6桁以内で入力してください。
+</p>
+</div>
+
+<div class="question">
+1、2、3、4、5、□
+</div>
+
+<input
+    type="password"
+    id="answer"
+    inputmode="numeric"
+    maxlength="6"
+>
+
+<button onclick="checkAnswer()">ENTER</button>
+
+<p id="result"></p>
+
+<div id="quit">
+    <button onclick="quitQuiz()">クイズをやめる</button>
+</div>
+
+<script>
+
+function checkAnswer() {
+
+    const answer = document.getElementById("answer").value;
+    const result = document.getElementById("result");
+
+    if (answer === "6") {
+        result.textContent = "正解！";
+    } else {
+        result.textContent = "ちがいます";
+    }
+
+}
+
+function quitQuiz() {
+    window.location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html>
