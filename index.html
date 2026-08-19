@@ -246,6 +246,25 @@ function checkPassword() {
         error.textContent = "よい風呂";
         return;
     }
+    
+    // --------------------------------
+// √n 語呂合わせ
+// --------------------------------
+
+if (password === "141421") {
+    error.textContent = "一夜一夜に人見頃、√2ですね！";
+    return;
+}
+
+if (password === "173205") {
+    error.textContent = "人並みにおごれや、√3ですね！";
+    return;
+}
+
+if (password === "223606") {
+    error.textContent = "富士山麓オウム鳴く、√5ですね！";
+    return;
+}
 
     // --------------------------------
     // その他の数字ネタ
