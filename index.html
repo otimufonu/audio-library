@@ -135,7 +135,7 @@ function checkPassword() {
     next.innerHTML = "";
 
     // --------------------------------
-    // 45 / 19 系の数字ネタ
+    // 45 / 19 系
     // --------------------------------
 
     let specialMessage = "";
@@ -154,34 +154,101 @@ function checkPassword() {
 
     }
 
-    // 45 と 19 のみで構成された入力なら1カウント
+    // 45と19のみで構成された入力は1カウント
     if (/^(45|19)+$/.test(password)) {
 
         ikisugiCount++;
 
-        // 3回目の対象入力
         if (ikisugiCount >= 3) {
-
             error.textContent = "イキスギィ！";
             ikisugiCount = 0;
 
         } else if (specialMessage !== "") {
-
-            // 個別ネタがある場合
             error.textContent = specialMessage;
 
         } else {
-
-            // 4519、1945など
             error.textContent = "";
-
         }
 
         return;
     }
 
     // --------------------------------
-    // 数字ネタ
+    // 語呂合わせ
+    // --------------------------------
+
+    if (password === "2525") {
+        error.textContent = "ニコニコ";
+        return;
+    }
+
+    if (password === "4649") {
+        error.textContent = "よろしく";
+        return;
+    }
+
+    if (password === "5963") {
+        error.textContent = "ご苦労さん";
+        return;
+    }
+
+    if (password === "39") {
+        error.textContent = "サンキュー";
+        return;
+    }
+
+    if (password === "3150") {
+        error.textContent = "最高";
+        return;
+    }
+
+    if (password === "14106") {
+        error.textContent = "愛してる";
+        return;
+    }
+
+    if (password === "110") {
+        error.textContent = "おまわりさん？";
+        return;
+    }
+
+    if (password === "119") {
+        error.textContent = "救急車？";
+        return;
+    }
+
+    if (password === "1192") {
+        error.textContent = "いいハコじゃないの？";
+        return;
+    }
+
+    if (password === "1185") {
+        error.textContent = "いいクニじゃないの？";
+        return;
+    }
+
+    if (password === "710") {
+        error.textContent = "納豆？";
+        return;
+    }
+
+    if (password === "801") {
+        error.textContent = "やおい";
+        return;
+    }
+
+    if (password === "831") {
+        error.textContent = "野菜";
+        return;
+    }
+
+    if (password === "4126") {
+        error.textContent = "よい風呂";
+        return;
+    }
+
+    // --------------------------------
+    // その他の数字ネタ
     // --------------------------------
 
     if (
@@ -199,10 +266,6 @@ function checkPassword() {
         error.textContent = "シゴロが出た！";
         return;
     }
-
-    // --------------------------------
-    // その他の淫夢系数字ネタ
-    // --------------------------------
 
     if (password === "0721") {
         error.textContent = "やりますねえ！";
@@ -274,17 +337,125 @@ function checkPassword() {
     }
 
     // --------------------------------
-    // 999983は6桁で最大の素数
+    // 数学ネタ
+    // --------------------------------
+
+    if (password === "1") {
+        error.textContent = "自然数の始まり";
+        return;
+    }
+
+    if (password === "2") {
+        error.textContent = "最初の素数";
+        return;
+    }
+
+    if (password === "3") {
+        error.textContent = "奇数";
+        return;
+    }
+
+    // 完全数
+    if (
+        password === "6" ||
+        password === "28" ||
+        password === "496" ||
+        password === "8128"
+    ) {
+        error.textContent = "完全数！";
+        return;
+    }
+
+    if (password === "11") {
+        error.textContent = "ゾロ目";
+        return;
+    }
+
+    if (password === "22") {
+        error.textContent = "素数じゃない";
+        return;
+    }
+
+    if (password === "111") {
+        error.textContent = "三桁ゾロ目";
+        return;
+    }
+
+    if (password === "121") {
+        error.textContent = "平方数！";
+        return;
+    }
+
+    if (password === "144") {
+        error.textContent = "12²";
+        return;
+    }
+
+    if (password === "169") {
+        error.textContent = "13²";
+        return;
+    }
+
+    if (password === "196") {
+        error.textContent = "14²";
+        return;
+    }
+
+    if (password === "225") {
+        error.textContent = "15²";
+        return;
+    }
+
+    if (password === "256") {
+        error.textContent = "16²";
+        return;
+    }
+
+    if (password === "343") {
+        error.textContent = "7³";
+        return;
+    }
+
+    if (password === "512") {
+        error.textContent = "8³";
+        return;
+    }
+
+    if (password === "729") {
+        error.textContent = "9³";
+        return;
+    }
+
+    if (password === "1024") {
+        error.textContent = "2の10乗！";
+        return;
+    }
+
+    // --------------------------------
+    // 2のn乗
+    // --------------------------------
+
+    const powerNumber = Number(password);
+
+    if (
+        password !== "" &&
+        powerNumber >= 2 &&
+        Number.isInteger(Math.log2(powerNumber))
+    ) {
+        const exponent = Math.log2(powerNumber);
+
+        error.textContent = `2の${exponent}乗ですね！`;
+        return;
+    }
+
+    // --------------------------------
+    // その他の数学ネタ
     // --------------------------------
 
     if (password === "999983") {
         error.textContent = "6桁で最大の素数だ！わーい！";
         return;
     }
-
-    // --------------------------------
-    // 数学ネタ
-    // --------------------------------
 
     if (password === "314159") {
         error.textContent = "π……？";
