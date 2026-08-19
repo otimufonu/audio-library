@@ -251,21 +251,21 @@ function checkPassword() {
         return;
     }
 
-    // その他の6桁の素数
-    const number = Number(password);
+    // その他の素数
+const number = Number(password);
 
-    if (password.length === 6 && isPrime(number)) {
+if (password !== "" && isPrime(number)) {
 
-        primeCount++;
+    primeCount++;
 
-        if (primeCount >= 4) {
-            error.textContent = "素数ばっか探してないでさ";
-        } else {
-            error.textContent = "素数だ！わーい";
-        }
-
-        return;
+    if (primeCount >= 3) {
+        error.textContent = "素数ばっか探してないでさ";
+    } else {
+        error.textContent = "素数だ！わーい";
     }
+
+    return;
+}
 
     // ここまで来たらページ遷移しなかったのでカウント
     wrongCount++;
