@@ -152,7 +152,7 @@ function checkPassword() {
             '<a href="https://share.google/zcnrAHNT6O7MTd5ax" target="_blank"><button>丸美焼肉店へ</button></a>';
         return;
     }
-    
+
     // 114514
     if (password === "114514") {
         error.textContent = "入って、どうぞ";
@@ -160,7 +160,7 @@ function checkPassword() {
             '<a href="https://youtu.be/niKAylKNIEI?si=tJOFKXD7AdBn0QUQ" target="_blank"><button>動画を見る</button></a>';
         return;
     }
-    
+
     // 999983は6桁で最大の素数
     if (password === "999983") {
         error.textContent = "6桁で最大の素数だ！わーい！";
@@ -216,9 +216,7 @@ function checkPassword() {
     }
 
     // ゾロ目
-    if (
-        password === "111111"
-    ) {
+    if (password === "111111") {
         error.textContent = "ピンゾロ！！！";
         return;
     }
@@ -301,13 +299,32 @@ function checkPassword() {
             "じゃあ一つだけ。「843811」入力して";
 
     } else if (wrongCount === 12) {
-        error.textContent = "……もう一回";
+
+        error.textContent = "ひまなの？クイズする？";
+
+        next.innerHTML = `
+            <button onclick="startQuiz()">はい</button>
+            <button onclick="noQuiz()">いいえ</button>
+        `;
+
         wrongCount = 0;
 
     } else {
         error.textContent = "それじゃない！よくみて";
     }
 
+}
+
+function startQuiz() {
+    window.location.href = "quiz.html";
+}
+
+function noQuiz() {
+    const error = document.getElementById("error");
+    const next = document.getElementById("next");
+
+    error.textContent = "そうですか……";
+    next.innerHTML = "";
 }
 
 </script>
