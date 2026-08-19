@@ -104,6 +104,7 @@ QRコードの右下にある文字列を入力↑<br>
 
 let wrongCount = 0;
 let primeCount = 0;
+let ikisugiCount = 0;
 
 function isPrime(n) {
 
@@ -133,7 +134,85 @@ function checkPassword() {
     // 前回表示したボタンを消す
     next.innerHTML = "";
 
+    // --------------------------------
+    // 45 / 19 系の数字ネタ
+    // --------------------------------
+
+    let specialMessage = "";
+
+    if (password === "4545") {
+        specialMessage = "ヌッ！";
+
+    } else if (password === "454545") {
+        specialMessage = "ｱｰｲｷｿ";
+
+    } else if (password === "1919") {
+        specialMessage = "オォン!アォン!";
+
+    } else if (password === "191919") {
+        specialMessage = "ンアッー!";
+
+    }
+
+    // 45 と 19 のみで構成された入力なら1カウント
+    if (/^(45|19)+$/.test(password)) {
+
+        ikisugiCount++;
+
+        // 3回目の対象入力
+        if (ikisugiCount >= 3) {
+
+            error.textContent = "イキスギィ！";
+            ikisugiCount = 0;
+
+        } else if (specialMessage !== "") {
+
+            // 個別ネタがある場合
+            error.textContent = specialMessage;
+
+        } else {
+
+            // 4519、1945など
+            error.textContent = "";
+
+        }
+
+        return;
+    }
+
+    // --------------------------------
+    // その他の淫夢系数字ネタ
+    // --------------------------------
+
+    if (password === "0721") {
+        error.textContent = "やりますねえ！";
+        return;
+    }
+
+    if (password === "810") {
+        error.textContent = "ファッ！？";
+        return;
+    }
+
+    if (password === "36") {
+        error.textContent = "36…普通だな！";
+        return;
+    }
+
+    if (password === "889464") {
+        error.textContent = "あくしろよ";
+        return;
+    }
+
+    if (password === "364364") {
+        error.textContent = "ホラ、見ろよ見ろよ、ホラ";
+        return;
+    }
+
+    // --------------------------------
     // 音源ページ
+    // --------------------------------
+
     if (password === "074874") {
         error.textContent = "いらっしゃいませ";
         next.innerHTML =
@@ -141,7 +220,10 @@ function checkPassword() {
         return;
     }
 
+    // --------------------------------
     // 招福来来ボーイ
+    // --------------------------------
+
     if (password === "442911") {
         error.textContent = "いらっしゃいませ";
         next.innerHTML =
@@ -149,7 +231,10 @@ function checkPassword() {
         return;
     }
 
+    // --------------------------------
     // 丸美焼肉店
+    // --------------------------------
+
     if (password === "843811") {
         error.textContent = "いらっしゃいませ";
         next.innerHTML =
@@ -157,7 +242,10 @@ function checkPassword() {
         return;
     }
 
+    // --------------------------------
     // 114514
+    // --------------------------------
+
     if (password === "114514") {
         error.textContent = "入って、どうぞ";
         next.innerHTML =
@@ -165,13 +253,19 @@ function checkPassword() {
         return;
     }
 
+    // --------------------------------
     // 999983は6桁で最大の素数
+    // --------------------------------
+
     if (password === "999983") {
         error.textContent = "6桁で最大の素数だ！わーい！";
         return;
     }
 
+    // --------------------------------
     // 数学ネタ
+    // --------------------------------
+
     if (password === "314159") {
         error.textContent = "π……？";
         return;
@@ -197,7 +291,10 @@ function checkPassword() {
         return;
     }
 
+    // --------------------------------
     // 昇順の階段
+    // --------------------------------
+
     if (
         password === "123456" ||
         password === "234567" ||
@@ -208,7 +305,10 @@ function checkPassword() {
         return;
     }
 
+    // --------------------------------
     // 降順の階段
+    // --------------------------------
+
     if (
         password === "654321" ||
         password === "765432" ||
@@ -219,7 +319,10 @@ function checkPassword() {
         return;
     }
 
+    // --------------------------------
     // ゾロ目
+    // --------------------------------
+
     if (password === "111111") {
         error.textContent = "ピンゾロ！！！";
         return;
@@ -251,23 +354,29 @@ function checkPassword() {
         return;
     }
 
+    // --------------------------------
     // その他の素数
-const number = Number(password);
+    // --------------------------------
 
-if (password !== "" && isPrime(number)) {
+    const number = Number(password);
 
-    primeCount++;
+    if (password !== "" && isPrime(number)) {
 
-    if (primeCount >= 3) {
-        error.textContent = "素数ばっか探してないでさ";
-    } else {
-        error.textContent = "素数だ！わーい";
+        primeCount++;
+
+        if (primeCount >= 3) {
+            error.textContent = "素数ばっか探してないでさ";
+        } else {
+            error.textContent = "素数だ！わーい";
+        }
+
+        return;
     }
 
-    return;
-}
-
+    // --------------------------------
     // ここまで来たらページ遷移しなかったのでカウント
+    // --------------------------------
+
     wrongCount++;
 
     // 000000はカウントしたうえで特別扱い
@@ -276,46 +385,49 @@ if (password !== "" && isPrime(number)) {
         return;
     }
 
+    // --------------------------------
     // その他の入力
-if (wrongCount === 3) {
-    error.textContent = "またちがうやん";
+    // --------------------------------
 
-} else if (wrongCount === 4) {
-    error.textContent = "えっ？";
+    if (wrongCount === 3) {
+        error.textContent = "またちがうやん";
 
-} else if (wrongCount === 5) {
-    error.textContent = "そろそろ…";
+    } else if (wrongCount === 4) {
+        error.textContent = "えっ？";
 
-} else if (wrongCount === 6) {
-    error.textContent = "おちついて！";
+    } else if (wrongCount === 5) {
+        error.textContent = "そろそろ…";
 
-} else if (wrongCount === 7) {
-    error.textContent = "ガンバレ、ガンバレ";
+    } else if (wrongCount === 6) {
+        error.textContent = "おちついて！";
 
-} else if (wrongCount === 8) {
-    error.textContent = "ほんとにCDみてる？";
+    } else if (wrongCount === 7) {
+        error.textContent = "ガンバレ、ガンバレ";
 
-} else if (wrongCount === 9) {
-    error.textContent = "教えてあげようか？";
+    } else if (wrongCount === 8) {
+        error.textContent = "ほんとにCDみてる？";
 
-} else if (wrongCount === 10) {
-    error.textContent =
-        "じゃあ一つだけ。「843811」入力して";
+    } else if (wrongCount === 9) {
+        error.textContent = "教えてあげようか？";
 
-} else if (wrongCount === 11) {
+    } else if (wrongCount === 10) {
+        error.textContent =
+            "じゃあ一つだけ。「843811」入力して";
 
-    error.textContent = "ひまなの？クイズする？";
+    } else if (wrongCount === 11) {
 
-    next.innerHTML = `
-        <button onclick="startQuiz()">はい</button>
-        <button onclick="noQuiz()">いいえ</button>
-    `;
+        error.textContent = "ひまなの？クイズする？";
 
-    wrongCount = 0;
+        next.innerHTML = `
+            <button onclick="startQuiz()">はい</button>
+            <button onclick="noQuiz()">いいえ</button>
+        `;
 
-} else {
-    error.textContent = "それじゃない！よくみて";
-}
+        wrongCount = 0;
+
+    } else {
+        error.textContent = "それじゃない！よくみて";
+    }
 }
 
 function startQuiz() {
