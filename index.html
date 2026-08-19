@@ -123,6 +123,10 @@ function isPrime(n) {
 function checkPassword() {
 
     const password = document.getElementById("password").value;
+
+    // 入力内容を保存したあと、入力欄を空にする
+    document.getElementById("password").value = "";
+
     const error = document.getElementById("error");
     const next = document.getElementById("next");
 
