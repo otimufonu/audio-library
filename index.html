@@ -56,12 +56,27 @@ button {
 </p>
 </div>
 <img src="qrpr.PNG" alt="QRコードラベル" class="qr-label">
-<p>QRコードの右下にある文字列を入力↑<br>※この画像は見本です。</p>
+<p>
+QRコードの右下にある文字列を入力↑<br>
+※この画像は見本です。
+</p>
 <input type="password" id="password" inputmode="numeric" maxlength="6">
 <button onclick="checkPassword()">ENTER</button>
 <p id="error"></p>
 <script>
 let wrongCount = 0;
+let primeCount = 0;
+function isPrime(n) {
+    if (n < 2) {
+        return false;
+    }
+    for (let i = 2; i <= Math.sqrt(n); i++) {
+        if (n % i === 0) {
+            return false;
+        }
+    }
+    return true;
+}
 function checkPassword() {
     const password = document.getElementById("password").value;
     const error = document.getElementById("error");
@@ -78,6 +93,22 @@ function checkPassword() {
     // 丸美焼肉店
     if (password === "843811") {
         window.location.href = "https://share.google/zcnrAHNT6O7MTd5ax";
+        return;
+    }
+    // 999983は6桁で最大の素数
+    if (password === "999983") {
+        error.textContent = "6桁で最大の素数だ！わーい！";
+        return;
+    }
+    // その他の6桁の素数
+    const number = Number(password);
+    if (password.length === 6 && isPrime(number)) {
+        primeCount++;
+        if (primeCount >= 4) {
+            error.textContent = "素数ばっか探してないでさ";
+        } else {
+            error.textContent = "素数だ！わーい";
+        }
         return;
     }
     // ここまで来たらページ遷移しなかったのでカウント
