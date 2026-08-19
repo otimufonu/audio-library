@@ -181,6 +181,26 @@ function checkPassword() {
     }
 
     // --------------------------------
+    // 数字ネタ
+    // --------------------------------
+
+    if (
+        password === "123" ||
+        password === "123123"
+    ) {
+        error.textContent = "ヒフミやん...";
+        return;
+    }
+
+    if (
+        password === "456" ||
+        password === "456456"
+    ) {
+        error.textContent = "シゴロが出た！";
+        return;
+    }
+
+    // --------------------------------
     // その他の淫夢系数字ネタ
     // --------------------------------
 
@@ -216,7 +236,7 @@ function checkPassword() {
     if (password === "074874") {
         error.textContent = "いらっしゃいませ";
         next.innerHTML =
-            '<a href="audio.html"><button>音源はこちら</button></a>';
+            '<a href="audio.html"><button>音源ページへ</button></a>';
         return;
     }
 
@@ -249,7 +269,7 @@ function checkPassword() {
     if (password === "114514") {
         error.textContent = "入って、どうぞ";
         next.innerHTML =
-            '<a href="https://youtu.be/niKAylKNIEI?si=tJOFKXD7AdBn0QUQ" target="_blank"><button>ﾔｼﾞｭｾﾝﾊﾟｲｲｷｽｷﾞﾝｲｸｲｸｱｯｱｯｱｯｱｰﾔﾘﾏｽﾈ</button></a>';
+            '<a href="https://youtu.be/niKAylKNIEI?si=tJOFKXD7AdBn0QUQ" target="_blank"><button>動画を見る</button></a>';
         return;
     }
 
