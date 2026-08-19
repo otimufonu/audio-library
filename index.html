@@ -152,7 +152,15 @@ function checkPassword() {
             '<a href="https://share.google/zcnrAHNT6O7MTd5ax" target="_blank"><button>丸美焼肉店へ</button></a>';
         return;
     }
-
+    
+    // 114514
+    if (password === "114514") {
+        error.textContent = "入って、どうぞ";
+        next.innerHTML =
+            '<a href="https://youtu.be/niKAylKNIEI?si=tJOFKXD7AdBn0QUQ" target="_blank"><button>動画を見る</button></a>';
+        return;
+    }
+    
     // 999983は6桁で最大の素数
     if (password === "999983") {
         error.textContent = "6桁で最大の素数だ！わーい！";
