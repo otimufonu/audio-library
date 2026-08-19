@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Audio Library</title>
+
 <style>
 body {
     font-family: sans-serif;
@@ -13,14 +15,17 @@ body {
     text-align: center;
     color: #222;
 }
+
 h1 {
     font-weight: normal;
     margin-bottom: 40px;
 }
+
 .description {
     line-height: 1.8;
     margin-bottom: 45px;
 }
+
 .qr-label {
     width: 100%;
     max-width: 400px;
@@ -28,6 +33,7 @@ h1 {
     display: block;
     margin: 30px auto 45px;
 }
+
 input {
     width: 200px;
     padding: 12px;
@@ -36,112 +42,267 @@ input {
     text-align: center;
     margin-top: 10px;
 }
+
 button {
     padding: 12px 22px;
     font-size: 16px;
     margin-left: 8px;
     cursor: pointer;
 }
+
 #error {
     margin-top: 25px;
     min-height: 1.8em;
 }
+
+#next {
+    margin-top: 20px;
+}
+
+#next a {
+    text-decoration: none;
+}
+
+#next button {
+    margin-left: 0;
+}
 </style>
+
 </head>
+
 <body>
+
 <h1>ようこそ</h1>
+
 <div class="description">
 <p>
 このページは、作品の音源をお楽しみいただくためのページです。
 </p>
 </div>
+
 <img src="qrpr.PNG" alt="QRコードラベル" class="qr-label">
+
 <p>
 QRコードの右下にある文字列を入力↑<br>
 ※この画像は見本です。
 </p>
-<input type="password" id="password" inputmode="numeric" maxlength="6">
+
+<input
+    type="password"
+    id="password"
+    inputmode="numeric"
+    maxlength="6"
+>
+
 <button onclick="checkPassword()">ENTER</button>
+
 <p id="error"></p>
+
+<div id="next"></div>
+
 <script>
+
 let wrongCount = 0;
 let primeCount = 0;
+
 function isPrime(n) {
+
     if (n < 2) {
         return false;
     }
+
     for (let i = 2; i <= Math.sqrt(n); i++) {
         if (n % i === 0) {
             return false;
         }
     }
+
     return true;
 }
+
 function checkPassword() {
+
     const password = document.getElementById("password").value;
     const error = document.getElementById("error");
-    // 正解
+    const next = document.getElementById("next");
+
+    // 前回表示したボタンを消す
+    next.innerHTML = "";
+
+    // 音源ページ
     if (password === "074874") {
-        window.location.href = "audio.html";
+        error.textContent = "いらっしゃいませ";
+        next.innerHTML =
+            '<a href="audio.html"><button>音源ページへ</button></a>';
         return;
     }
+
     // 招福来来ボーイ
     if (password === "442911") {
-        window.location.href = "shoufuku.html";
+        error.textContent = "いらっしゃいませ";
+        next.innerHTML =
+            '<a href="shoufuku.html"><button>招福来来ボーイへ</button></a>';
         return;
     }
+
     // 丸美焼肉店
     if (password === "843811") {
-        window.location.href = "https://share.google/zcnrAHNT6O7MTd5ax";
+        error.textContent = "いらっしゃいませ";
+        next.innerHTML =
+            '<a href="https://share.google/zcnrAHNT6O7MTd5ax" target="_blank"><button>丸美焼肉店へ</button></a>';
         return;
     }
+
     // 999983は6桁で最大の素数
     if (password === "999983") {
         error.textContent = "6桁で最大の素数だ！わーい！";
         return;
     }
+
+    // 数学ネタ
+    if (password === "314159") {
+        error.textContent = "π……？";
+        return;
+    }
+
+    if (password === "271828") {
+        error.textContent = "e……？";
+        return;
+    }
+
+    if (password === "161803") {
+        error.textContent = "黄金比だ！";
+        return;
+    }
+
+    if (password === "112358") {
+        error.textContent = "フィボナッチ！";
+        return;
+    }
+
+    if (password === "142857") {
+        error.textContent = "循環してる！";
+        return;
+    }
+
+    // 昇順の階段
+    if (
+        password === "123456" ||
+        password === "234567" ||
+        password === "345678" ||
+        password === "456789"
+    ) {
+        error.textContent = "階段やん";
+        return;
+    }
+
+    // 降順の階段
+    if (
+        password === "654321" ||
+        password === "765432" ||
+        password === "876543" ||
+        password === "987654"
+    ) {
+        error.textContent = "降りてるやん";
+        return;
+    }
+
+    // ゾロ目
+    if (
+        password === "111111"
+    ) {
+        error.textContent = "ピンゾロ！！！";
+        return;
+    }
+
+    if (
+        password === "222222" ||
+        password === "333333" ||
+        password === "444444" ||
+        password === "555555" ||
+        password === "666666"
+    ) {
+        error.textContent = "アラシ3倍！";
+        return;
+    }
+
+    if (password === "777777") {
+        error.textContent = "めでたいですね";
+        return;
+    }
+
+    if (password === "888888") {
+        error.textContent = "ヤンキーの車番じゃないんだから";
+        return;
+    }
+
+    if (password === "999999") {
+        error.textContent = "やり直し";
+        return;
+    }
+
     // その他の6桁の素数
     const number = Number(password);
+
     if (password.length === 6 && isPrime(number)) {
+
         primeCount++;
+
         if (primeCount >= 4) {
             error.textContent = "素数ばっか探してないでさ";
         } else {
             error.textContent = "素数だ！わーい";
         }
+
         return;
     }
+
     // ここまで来たらページ遷移しなかったのでカウント
     wrongCount++;
+
     // 000000はカウントしたうえで特別扱い
     if (password === "000000") {
         error.textContent = "そんなわけない";
         return;
     }
+
     // その他の入力
     if (wrongCount === 4) {
         error.textContent = "またちがうやん";
+
     } else if (wrongCount === 5) {
         error.textContent = "えっ？";
+
     } else if (wrongCount === 6) {
         error.textContent = "そろそろ…";
+
     } else if (wrongCount === 7) {
         error.textContent = "おちついて！";
+
     } else if (wrongCount === 8) {
         error.textContent = "ガンバレ、ガンバレ";
+
     } else if (wrongCount === 9) {
         error.textContent = "ほんとにCDみてる？";
+
     } else if (wrongCount === 10) {
         error.textContent = "教えてあげようか？";
+
     } else if (wrongCount === 11) {
-        error.textContent = "じゃあ一つだけ。「843811」入力して";
+        error.textContent =
+            "じゃあ一つだけ。「843811」入力して";
+
     } else if (wrongCount === 12) {
         error.textContent = "……もう一回";
         wrongCount = 0;
+
     } else {
         error.textContent = "それじゃない！よくみて";
     }
+
 }
+
 </script>
+
 </body>
 </html>
