@@ -277,46 +277,45 @@ function checkPassword() {
     }
 
     // その他の入力
-    if (wrongCount === 4) {
-        error.textContent = "またちがうやん";
+if (wrongCount === 3) {
+    error.textContent = "またちがうやん";
 
-    } else if (wrongCount === 5) {
-        error.textContent = "えっ？";
+} else if (wrongCount === 4) {
+    error.textContent = "えっ？";
 
-    } else if (wrongCount === 6) {
-        error.textContent = "そろそろ…";
+} else if (wrongCount === 5) {
+    error.textContent = "そろそろ…";
 
-    } else if (wrongCount === 7) {
-        error.textContent = "おちついて！";
+} else if (wrongCount === 6) {
+    error.textContent = "おちついて！";
 
-    } else if (wrongCount === 8) {
-        error.textContent = "ガンバレ、ガンバレ";
+} else if (wrongCount === 7) {
+    error.textContent = "ガンバレ、ガンバレ";
 
-    } else if (wrongCount === 9) {
-        error.textContent = "ほんとにCDみてる？";
+} else if (wrongCount === 8) {
+    error.textContent = "ほんとにCDみてる？";
 
-    } else if (wrongCount === 10) {
-        error.textContent = "教えてあげようか？";
+} else if (wrongCount === 9) {
+    error.textContent = "教えてあげようか？";
 
-    } else if (wrongCount === 11) {
-        error.textContent =
-            "じゃあ一つだけ。「843811」入力して";
+} else if (wrongCount === 10) {
+    error.textContent =
+        "じゃあ一つだけ。「843811」入力して";
 
-    } else if (wrongCount === 12) {
+} else if (wrongCount === 11) {
 
-        error.textContent = "ひまなの？クイズする？";
+    error.textContent = "ひまなの？クイズする？";
 
-        next.innerHTML = `
-            <button onclick="startQuiz()">はい</button>
-            <button onclick="noQuiz()">いいえ</button>
-        `;
+    next.innerHTML = `
+        <button onclick="startQuiz()">はい</button>
+        <button onclick="noQuiz()">いいえ</button>
+    `;
 
-        wrongCount = 0;
+    wrongCount = 0;
 
-    } else {
-        error.textContent = "それじゃない！よくみて";
-    }
-
+} else {
+    error.textContent = "それじゃない！よくみて";
+}
 }
 
 function startQuiz() {
