@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>数列クイズ</title>
+<title>数字にまつわるクイズ</title>
 
 <style>
 body {
@@ -28,7 +28,8 @@ h1 {
 
 .question {
     font-size: 24px;
-    letter-spacing: 4px;
+    letter-spacing: 2px;
+    line-height: 1.7;
     margin: 40px 0;
 }
 
@@ -51,6 +52,21 @@ button {
 #result {
     margin-top: 25px;
     min-height: 1.8em;
+    font-weight: bold;
+}
+
+#explanation {
+    margin-top: 25px;
+    line-height: 1.9;
+    text-align: left;
+}
+
+#next {
+    margin-top: 25px;
+}
+
+#next button {
+    margin-left: 0;
 }
 
 #quit {
@@ -60,35 +76,59 @@ button {
 #quit button {
     margin-left: 0;
 }
+
+.choice {
+    display: inline-block;
+    margin: 8px;
+    min-width: 100px;
+}
+
+.choice button {
+    margin-left: 0;
+}
+
+.hidden {
+    display: none;
+}
 </style>
 
 </head>
 
 <body>
 
-<h1>数列クイズ</h1>
+<h1>数字にまつわるクイズ</h1>
 
 <div class="description">
 <p>
-次の数字に入るものを<br>
-6桁以内で入力してください。
+数字にまつわる問題を<br>
+ランダムに出題します。
 </p>
 </div>
 
-<div class="question">
-1、2、3、4、5、□
+<div class="question" id="question"></div>
+
+<div id="answerArea">
+
+    <input
+        type="text"
+        id="answer"
+        inputmode="numeric"
+        maxlength="6"
+    >
+
+    <button onclick="checkAnswer()">ENTER</button>
+
 </div>
 
-<input
-    type="password"
-    id="answer"
-    inputmode="numeric"
-    maxlength="6"
->
-
-<button onclick="checkAnswer()">ENTER</button>
+<div id="choices" class="hidden"></div>
 
 <p id="result"></p>
+
+<div id="explanation"></div>
+
+<div id="next" class="hidden">
+    <button onclick="nextQuestion()">次の問題</button>
+</div>
 
 <div id="quit">
     <button onclick="quitQuiz()">クイズをやめる</button>
@@ -96,22 +136,588 @@ button {
 
 <script>
 
-function checkAnswer() {
+const questions = [
 
-    const answer = document.getElementById("answer").value;
-    const result = document.getElementById("result");
+    {
+        question: "点字の1文字は、最大何個の点からできている？",
+        answer: ["6"],
+        explanation: `
+            点字は、2列×3段、6個の点を使って文字を表します。<br><br>
+            6個の点は、それぞれ「出っ張っている」「出っ張っていない」の2通り。<br><br>
+            だから組み合わせは、<br>
+            2⁶＝64通り。<br><br>
+            たった6個の点から、64種類のパターンを作ることができます。<br><br>
+            実際には、64通りすべてを1文字ずつ割り当てるのではなく、かな、数字、アルファベット、濁点、句読点などを、点の組み合わせやルールを使って表現します。
+        `
+    },
 
-    if (answer === "6") {
-        result.textContent = "正解！";
+    {
+        question: "2の5乗は？",
+        answer: ["32"],
+        explanation: `
+            2⁵＝32。<br><br>
+            32といえば、親知らずまで含めた大人の歯の本数です。<br><br>
+            親知らずは一番奥に生える4本の歯。名前の由来は、昔は親が子どもの歯の成長を見る時期を過ぎてから生えてくることが多かったため、「親が知らないうちに生える歯」と呼ばれたことにあります。
+        `
+    },
+
+    {
+        question: "2の6乗は？",
+        answer: ["64"],
+        explanation: `
+            2⁶＝64。<br><br>
+            64といえば、Nintendo 64。<br><br>
+            Nintendo 64の「64」は、64ビットCPUを搭載していたことをアピールするための名前でした。<br><br>
+            ビットとは、コンピューターが扱う「0か1」の単位。1ビットなら2通り、2ビットなら4通り、6ビットなら2⁶＝64通りを表せます。
+        `
+    },
+
+    {
+        question: "2の7乗は？",
+        answer: ["128"],
+        explanation: `
+            2⁷＝128。<br><br>
+            128という数字は、コンピューターの歴史にも登場します。<br><br>
+            1948年、イギリスで作られた初期のコンピューター、Manchester Babyでは、128ワードの記憶装置が使われました。<br><br>
+            今のスマートフォンでは何GB、何TBという数字が当たり前ですが、当時のコンピューターの記憶容量は、現在とは比較にならないほど小さなものでした。
+        `
+    },
+
+    {
+        question: "今年って昭和でいうと何年？",
+        answer: [String(new Date().getFullYear() - 1925)],
+        explanation: `
+            昭和は1926年から1989年まで、64年続きました。<br><br>
+            西暦から昭和の年を求めるには、1925を引けばOKです。<br><br>
+            例えば2026年なら、<br>
+            2026−1925＝101。<br><br>
+            昭和そのものは64年で終わりましたが、もし現在の西暦をそのまま昭和に換算すると「昭和101年」になります。
+        `
+    },
+
+    {
+        question: "次の閏年は西暦何年？",
+        answer: [String(getNextLeapYear())],
+        explanation: `
+            うるう年には、2月に1日が追加されます。<br><br>
+            今の暦のもとになった古代ローマの暦では、もともと2月が1年の最後の月でした。<br><br>
+            暦に余分な日を加えて調整するときも、年の最後に置くのが自然だったため、2月に閏日を入れる習慣ができました。<br><br>
+            その後、1月が年の最初になっても、この習慣は残りました。
+        `
+    },
+
+    {
+        question: "地球が太陽の周りを一周するのにかかる時間は約何日？",
+        answer: ["365"],
+        explanation: `
+            地球が太陽を一周するのにかかる時間は、約365日。<br><br>
+            でも、実際には365日ぴったりではなく、365日と6時間弱かかります。<br><br>
+            このズレを調整するため、4年に一度、2月に1日を足します。これがうるう年です。<br><br>
+            さらに「100で割り切れる年はうるう年にしない。ただし400で割り切れる年はうるう年にする」という調整も行われています。
+        `
+    },
+
+    {
+        question: "1から100までの整数のうち、偶数はいくつ？",
+        answer: ["50"],
+        explanation: `
+            1から100までの半分が偶数なので、50個。<br><br>
+            偶数とは、2つずつ組にしたときに余りが出ない数です。「偶」という字にも「二つ一組」という意味があります。<br><br>
+            逆に、ペアを作ったとき1つ余るのが奇数です。学生時代の僕のことです。
+        `
+    },
+
+    {
+        question: "6桁の数のうち、最大の素数は？",
+        answer: ["999983"],
+        explanation: `
+            6桁で最大の素数は999983。<br><br>
+            999999まであと16しかありません。100万にかなり近いところまで来ても、まだ素数が見つかります。<br><br>
+            そして面白いことに、素数には「これが最後」という数字がありません。<br><br>
+            ユークリッドは、素数が有限個しかないと仮定すると、そこからさらに別の素数を作れることを示し、素数が無限に存在することを証明しました。
+        `
+    },
+
+    {
+        question: "3桁の自然数（100以上）の中で、最小の素数は？",
+        answer: ["101"],
+        explanation: `
+            素数は、1と自分自身でしか割り切れない数です。<br><br>
+            実は、この性質はインターネットの暗号にも利用されています。<br><br>
+            大きな素数を2つ掛け合わせるのは簡単ですが、その答えから元の2つの素数を探し出すのは、数字が巨大になるほど難しくなります。<br><br>
+            こうした性質を利用して、公開鍵暗号などの仕組みが作られています。
+        `
+    },
+
+    {
+        question: "3の3乗は？",
+        answer: ["27"],
+        explanation: `
+            3³＝27。<br><br>
+            3×3×3の立体は、27個分の小さな立方体からできています。<br><br>
+            これこそが、ハンガリーの建築家エルネー・ルービックが考案したルービックキューブの構成です。<br><br>
+            数学の「3×3×3」が、立体を理解するための道具から、世界中で遊ばれるパズルになったんですね。
+        `
+    },
+
+    {
+        question: "2の3乗は？",
+        answer: ["8"],
+        explanation: `
+            2³＝8。<br><br>
+            8ビットとは、0と1を8個並べて情報を表す単位です。<br><br>
+            1つの桁には0か1の2通りがあるので、8個並べると2⁸＝256通りの組み合わせができます。この8ビットをひとまとめにしたものが1バイトです。<br><br>
+            ファミコンなどの初期のゲーム機で使われた電子的な音楽は、現在では「8ビット音楽」「チップチューン」と呼ばれることもあります。
+        `
+    },
+
+    {
+        question: "2の10乗は？",
+        answer: ["1024"],
+        explanation: `
+            2¹⁰＝1024。<br><br>
+            コンピューターでは、0と1でデータを扱うため、2の累乗がよく登場します。<br><br>
+            1024という数字もそのひとつで、コンピューターでは長く、1024倍を区切りとしてデータ容量を表す慣習がありました。<br><br>
+            キロ、メガ、ギガ、テラ……容量が大きくなるにつれて、名前までどんどん大げさになっていきます。
+        `
+    },
+
+    {
+        question: "ハチの巣は何角形？",
+        answer: ["6"],
+        explanation: `
+            答えは六角形。ハチなのに「六」です。<br><br>
+            六角形は隙間なく並べることができ、同じ広さの部屋を作るのに必要な材料も少なくて済む、とても効率のいい形です。<br><br>
+            このような六角形を敷き詰めた構造をハニカム構造と呼びます。<br><br>
+            「六角形で敷き詰めるのが最も効率的」ということが数学的に証明されたのは1999年。ハチは人間よりずっと前から六角形を使っていました。
+        `
+    },
+
+    {
+        question: "円周率を6桁書いてください",
+        answer: ["314159"],
+        explanation: `
+            円周率は、最初から「3.14……」という数字として発見されたわけではありません。<br><br>
+            円周を直径で割ると、どんな円でも約3.14になる。昔の人々は、円を測ったり図形を使ったりしながら、この数字を少しずつ正確にしていきました。<br><br>
+            円周率は今でも割り切れず、3.141592……とどこまでも続きます。<br><br>
+            「314159」は、3.14159……の最初の6桁です。
+        `
+    },
+
+    {
+        question: "以下の数列の空欄に当てはまる数字を入力してください<br>1、1、2、3、5、□",
+        answer: ["8"],
+        explanation: `
+            これはフィボナッチ数列。<br><br>
+            前の2つの数を足して次の数を作ります。<br><br>
+            1＋1＝2<br>
+            1＋2＝3<br>
+            2＋3＝5<br>
+            3＋5＝8<br><br>
+            この数列は、植物の葉や種の並びなど、自然界に現れるパターンとの関連でも有名です。
+        `
+    },
+
+    {
+        question: "江戸幕府の将軍は全部で何人？",
+        answer: ["15"],
+        explanation: `
+            徳川将軍は家康から慶喜まで15人。江戸幕府は約260年続きました。<br><br>
+            前期には街道や宿場町、城下町などが整備され、中期には歌舞伎や浮世絵、出版などの町人文化が花開きます。<br><br>
+            後期には外国船の来航や幕府の財政難などで社会が揺らぎ、最後は大政奉還、明治維新へと向かいます。
+        `
+    },
+
+    {
+        question: "応仁の乱が始まったのは西暦何年？",
+        answer: ["1467"],
+        explanation: `
+            1467年に始まった応仁の乱は、将軍家の後継者問題や、有力大名たちの家督争い・勢力争いなど、さまざまな事情が絡み合って起こった戦乱です。<br><br>
+            東軍と西軍に分かれた戦いは11年間も続き、明確な勝者がないまま終わりました。<br><br>
+            京都を焼け野原にしてまで11年も戦ったのに、結局「で、誰が勝ったの？」となる、なかなかややこしい戦です。
+        `
+    },
+
+    {
+        question: "明治維新が起こったのは西暦何年？",
+        answer: ["1868"],
+        explanation: `
+            1868年、明治維新によって日本の政治や社会の仕組みが大きく変わっていきました。<br><br>
+            1872年には学制が公布され、全国に近代的な学校制度が作られ始めます。<br><br>
+            今では当たり前の「子どもが学校に通う」という生活も、明治時代に形作られていったものなんですね。
+        `
+    },
+
+    {
+        question: "関ヶ原の戦いが起こったのは西暦何年？",
+        answer: ["1600"],
+        explanation: `
+            関ヶ原の戦いは1600年。<br><br>
+            関ヶ原は現在も岐阜県に実際に残っている地名です。古戦場には石碑や陣跡などが残され、当時の地形を歩いて見ることができます。<br><br>
+            400年以上前の「天下分け目の戦い」が、教科書の中だけではなく、今も歩ける場所として残っているんですね。
+        `
+    },
+
+    {
+        question: "鉄砲が日本に伝来したのは西暦何年？",
+        answer: ["1543"],
+        explanation: `
+            1543年、種子島に鉄砲が伝わりました。<br><br>
+            日本人は伝来した鉄砲を分解して構造を研究し、短期間で国産化、大量生産できるようになりました。<br><br>
+            新しいものを見たら、とりあえず作ってみる。後の日本のものづくりにもつながる「魔改造力」のご先祖様なのかもしれません。
+        `
+    },
+
+    {
+        question: "現在流通している日本の硬貨のうち、最も額面が高いのは何円玉？",
+        answer: ["500"],
+        explanation: `
+            500円玉は、日本で現在流通している硬貨の中で最も高額な硬貨です。<br><br>
+            かつて偽造に悩まされたことから、現在の500円玉にはバイカラー構造、異形斜めギザ、微細文字、潜像など、さまざまな偽造防止技術が使われています。<br><br>
+            普段何気なく使っている500円玉、実はかなりのハイテク硬貨です。
+        `
+    },
+
+    {
+        question: "架空の木がモチーフに描かれている硬貨は何円玉？",
+        answer: ["1"],
+        explanation: `
+            1円玉には若木が描かれています。<br><br>
+            実は特定の樹種ではなく、成長や未来を象徴した架空の樹木です。<br><br>
+            ちなみに1円玉はアルミニウム製。製造費が額面を上回ることがあるとも言われています。<br><br>
+            1円なのに、1円では作れない。なんだか不思議な硬貨ですね。
+        `
+    },
+
+    {
+        question: "稲穂が描かれている硬貨は何円玉？",
+        answer: ["5"],
+        explanation: `
+            5円玉には稲穂が描かれています。<br><br>
+            稲から収穫されたものは、籾、玄米、白米、そして炊けばご飯と、状態によって呼び名が変わります。<br><br>
+            米に対する日本人の熱量が伺えますね。<br><br>
+            一方、英語では米を基本的に「rice」と呼びますが、パンには bread、loaf、slice、bun、roll、toast など、形や状態によって別々の単語があります。<br><br>
+            パンに対する英語圏の人々の熱量が伺えますね。
+        `
+    },
+
+    {
+        question: "パンの重さを表す「一斤」は何グラム以上？",
+        answer: ["340"],
+        explanation: `
+            現在の包装食パンでは、1斤は340g以上とされています。<br><br>
+            「一斤＝必ず340g」という意味ではなく、340gが最低重量として定められています。<br><br>
+            「斤」という単位は昔から使われてきたため、時代や用途によって異なる重さで扱われてきました。検索すると600gという数字が出てくるのもそのためです。
+        `
+    },
+
+    {
+        question: "桜が描かれている硬貨は何円玉？",
+        answer: ["100"],
+        explanation: `
+            100円玉には桜が描かれています。<br><br>
+            日本の桜といえばソメイヨシノを思い浮かべる人も多いですが、ソメイヨシノは日本に昔からあった野生の桜ではなく、江戸時代末期から明治時代にかけて広まった園芸品種です。<br><br>
+            しかもソメイヨシノは、ほぼすべて同じ遺伝子を持つクローンです。
+        `
+    },
+
+    {
+        question: "菊が描かれている硬貨は何円玉？",
+        answer: ["50"],
+        explanation: `
+            50円玉には菊が描かれています。<br><br>
+            菊には食用になる種類もあります。<br><br>
+            花は「食べられるかどうか」だけでなく、「味はどうか」「料理に合うか」「見た目が美しいか」など、いろいろな条件が揃って初めて食材になります。<br><br>
+            食用菊は、その条件を満たしてきた花なのです。
+        `
+    },
+
+    {
+        question: "平等院鳳凰堂が描かれている硬貨は何円玉？",
+        answer: ["10"],
+        explanation: `
+            10円玉に描かれているのは平等院鳳凰堂です。<br><br>
+            1053年、藤原頼通によって建てられた阿弥陀堂で、浄土信仰の「極楽浄土」を表すように池の中島に建てられています。<br><br>
+            ちなみに建てられた当時から「鳳凰堂」と呼ばれていたわけではなく、この名前が定着したのは江戸時代初め頃です。
+        `
+    },
+
+    {
+        question: "ワイマール憲法が制定されたのは西暦何年？",
+        answer: ["1919"],
+        explanation: `
+            1919年に制定されたワイマール憲法は、第一次世界大戦後のドイツで新しい国の仕組みを作るために定められました。<br><br>
+            国民が選挙で議会を選ぶ民主的な仕組みが定められ、女性にも選挙権が認められました。<br><br>
+            「ワイマール」という名前は、この憲法を制定する国民議会がワイマールで開かれたことに由来します。
+        `
+    },
+
+    {
+        question: "平安京が置かれたのは西暦何年？",
+        type: "choice",
+        choices: ["710", "784", "794"],
+        answer: ["794"],
+        explanation: `
+            794年、平安京が置かれました。<br><br>
+            710年の平城京から794年の平安京へ。実はその間に784年の長岡京を挟んでいます。<br><br>
+            長岡京はわずか10年ほどでその役割を終えました。<br><br>
+            710 → 784 → 794。<br>
+            「鳴くよウグイス」で覚えた人も多い年です。
+        `
+    },
+
+    {
+        question: "鎌倉幕府が成立したのは西暦何年？",
+        answer: ["1185", "1192"],
+        explanation: `
+            1185年は、源頼朝が守護・地頭の設置を朝廷から認められた年で、鎌倉幕府の実質的な成立年とされる有力な説です。<br><br>
+            一方、1192年は源頼朝が征夷大将軍に任命された年。<br><br>
+            現在の歴史学では1185年を重視する考え方が一般的ですが、1192年も歴史的に重要な年です。<br><br>
+            僕はイイクニの方が好きです。
+        `
+    },
+
+    {
+        question: "A×B×C＝A＋B＋C<br>この式に当てはまる1〜9までの整数で、ABCを入力してください",
+        answer: ["123", "132", "213", "231", "312", "321"],
+        explanation: `
+            1×2×3＝6<br>
+            そして<br>
+            1＋2＋3＝6。<br><br>
+            6のように、自分自身が自分自身を除く正の約数の和に等しくなる自然数を完全数といいます。<br><br>
+            この問題では、1、2、3を並べた「123」を入力すれば正解です。
+        `
+    },
+
+    {
+        question: "ルート4を数値に直すと？（最大6桁まで）",
+        answer: ["2"],
+        explanation: `
+            √4＝2。<br><br>
+            平方根とは、2乗すると元の数になる数のことです。<br><br>
+            2²＝4なので、√4＝2。<br><br>
+            平方根という考え方は古代から使われており、古代バビロニアでは紀元前2000年ごろには平方根を求める方法が知られていたと考えられています。
+        `
+    },
+
+    {
+        question: "ルート9を数値に直すと？（最大6桁まで）",
+        answer: ["3"],
+        explanation: `
+            √9＝3。<br><br>
+            例えば、縦3m、横4mの部屋の対角線なら、<br><br>
+            3²＋4²＝25<br>
+            √25＝5m。<br><br>
+            平方根は建築や測量、地図、GPS、コンピューター上の距離計算などにも使われています。
+        `
+    },
+
+    {
+        question: "ルート2を数値に直すといくつ？（最大6桁まで）",
+        answer: ["141421"],
+        explanation: `
+            √2＝1.41421356……<br><br>
+            最初の6桁は141421。<br><br>
+            語呂合わせでは、<br>
+            「ひとよひとよにひとみごろ」<br><br>
+            と覚えます。
+        `
+    },
+
+    {
+        question: "ルート3を数値に直すといくつ？（最大6桁まで）",
+        answer: ["173205"],
+        explanation: `
+            √3＝1.7320508……<br><br>
+            最初の6桁は173205。<br><br>
+            語呂合わせでは、<br>
+            「ひとなみにおごれや」<br><br>
+            と覚えます。
+        `
+    },
+
+    {
+        question: "ルート5を数値に直すといくつ？（最大6桁まで）",
+        answer: ["223606"],
+        explanation: `
+            √5＝2.2360679……<br><br>
+            最初の6桁は223606。<br><br>
+            語呂合わせでは、<br>
+            「ふじさんろくおうむなく」<br><br>
+            と覚えます。
+        `
+    },
+
+    {
+        question: "3² × 5 × 101＝？",
+        answer: ["4545"],
+        explanation: `
+            3²＝9。<br><br>
+            9×5×101<br>
+            ＝45×101<br>
+            ＝4545。<br><br>
+            4545という数字を作るのに、3²、5、101という素数が関わっています。<br><br>
+            特に101は、6桁どころか3桁の素数としてもかなり目立つ存在。数字の組み合わせだけで4545という数字ができあがります。
+        `
+    }
+
+];
+
+let currentQuestion = null;
+let answered = false;
+
+
+/* 次の閏年を求める */
+function getNextLeapYear() {
+
+    const currentYear = new Date().getFullYear();
+
+    let year = currentYear + 1;
+
+    while (!isLeapYear(year)) {
+        year++;
+    }
+
+    return year;
+}
+
+
+/* うるう年判定 */
+function isLeapYear(year) {
+
+    return (
+        year % 400 === 0 ||
+        (year % 4 === 0 && year % 100 !== 0)
+    );
+
+}
+
+
+/* ランダムに問題を選ぶ */
+function nextQuestion() {
+
+    answered = false;
+
+    document.getElementById("result").textContent = "";
+    document.getElementById("explanation").innerHTML = "";
+    document.getElementById("next").classList.add("hidden");
+
+    const answerArea = document.getElementById("answerArea");
+    const choices = document.getElementById("choices");
+
+    answerArea.classList.remove("hidden");
+    choices.classList.add("hidden");
+    choices.innerHTML = "";
+
+    currentQuestion =
+        questions[Math.floor(Math.random() * questions.length)];
+
+    document.getElementById("question").innerHTML =
+        currentQuestion.question;
+
+    if (currentQuestion.type === "choice") {
+
+        answerArea.classList.add("hidden");
+        choices.classList.remove("hidden");
+
+        currentQuestion.choices.forEach(choice => {
+
+            const button = document.createElement("button");
+
+            button.textContent = choice;
+            button.className = "choice";
+
+            button.onclick = function() {
+                checkChoice(choice);
+            };
+
+            choices.appendChild(button);
+
+        });
+
     } else {
-        result.textContent = "ちがいます";
+
+        document.getElementById("answer").value = "";
+        document.getElementById("answer").focus();
+
     }
 
 }
 
-function quitQuiz() {
-    window.location.href = "index.html";
+
+/* 通常の入力問題 */
+function checkAnswer() {
+
+    if (answered) return;
+
+    const answer =
+        document.getElementById("answer").value.trim();
+
+    checkAnswerValue(answer);
+
 }
+
+
+/* 選択問題 */
+function checkChoice(answer) {
+
+    if (answered) return;
+
+    checkAnswerValue(answer);
+
+}
+
+
+/* 正解判定 */
+function checkAnswerValue(answer) {
+
+    const result = document.getElementById("result");
+    const explanation = document.getElementById("explanation");
+
+    if (currentQuestion.answer.includes(answer)) {
+
+        answered = true;
+
+        result.textContent = "正解！";
+
+        explanation.innerHTML =
+            currentQuestion.explanation;
+
+        document.getElementById("next")
+            .classList.remove("hidden");
+
+    } else {
+
+        result.textContent = "ちがいます";
+
+    }
+
+}
+
+
+/* Enterキーでも回答できる */
+document.getElementById("answer").addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+            checkAnswer();
+        }
+
+    }
+);
+
+
+/* クイズをやめる */
+function quitQuiz() {
+
+    window.location.href = "index.html";
+
+}
+
+
+/* 最初の問題 */
+nextQuestion();
 
 </script>
 
