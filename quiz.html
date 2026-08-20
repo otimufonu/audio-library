@@ -29,8 +29,15 @@ h1 {
 .question {
     font-size: 24px;
     letter-spacing: 2px;
-    line-height: 1.8;
     margin: 40px 0;
+    line-height: 1.8;
+}
+
+.explanation {
+    text-align: left;
+    line-height: 1.9;
+    margin-top: 35px;
+    white-space: pre-wrap;
 }
 
 input {
@@ -45,27 +52,14 @@ input {
 button {
     padding: 12px 22px;
     font-size: 16px;
-    margin-left: 8px;
+    margin: 8px;
     cursor: pointer;
 }
 
 #result {
     margin-top: 25px;
     min-height: 1.8em;
-}
-
-#explanation {
-    margin-top: 25px;
-    line-height: 1.9;
-    text-align: left;
-}
-
-#next {
-    margin-top: 25px;
-}
-
-#next button {
-    margin-left: 0;
+    font-weight: bold;
 }
 
 #quit {
@@ -76,45 +70,31 @@ button {
     margin-left: 0;
 }
 
-#blockResult {
-    margin-top: 40px;
-    line-height: 2;
-}
-
-#continueArea {
-    margin-top: 35px;
-}
-
-#continueArea button {
-    margin: 8px;
-}
-
-#finalStage {
-    line-height: 2;
-    margin-top: 60px;
-}
-
-#finalStage button {
+.stage {
     margin-top: 30px;
-    margin-left: 0;
+    margin-bottom: 40px;
 }
 
-#finalResult {
-    line-height: 2;
-    margin-top: 40px;
+.score {
+    font-size: 20px;
+    margin: 30px 0;
 }
 
-.choice {
-    display: inline-block;
-    margin: 8px;
-}
-
-.choice button {
-    margin-left: 0;
+.next-button {
+    margin-top: 35px;
 }
 
 .hidden {
     display: none;
+}
+
+.start-button {
+    font-size: 18px;
+    padding: 14px 30px;
+}
+
+.choice-button {
+    min-width: 100px;
 }
 </style>
 
@@ -124,86 +104,103 @@ button {
 
 <h1>数字にまつわるクイズ</h1>
 
-<div class="description" id="description">
-<p>
-数字にまつわる問題を<br>
-ランダムに出題します。
-</p>
+<div id="startScreen">
+
+    <div class="description">
+        <p>
+        数字にまつわるクイズです。<br>
+        全問正解を目指してください。
+        </p>
+    </div>
+
+    <button class="start-button" onclick="startQuiz()">スタート</button>
+
 </div>
 
-<div id="quizArea">
+
+<div id="quizScreen" class="hidden">
 
     <div class="question" id="question"></div>
 
-    <div id="answerArea">
+    <input
+        type="password"
+        id="answer"
+        inputmode="numeric"
+        maxlength="6"
+    >
 
-        <input
-            type="text"
-            id="answer"
-            inputmode="numeric"
-            maxlength="6"
-        >
-
-        <button onclick="checkAnswer()">ENTER</button>
-
-    </div>
-
-    <div id="choices" class="hidden"></div>
+    <button onclick="checkAnswer()">ENTER</button>
 
     <p id="result"></p>
 
-    <div id="explanation"></div>
+    <div id="explanation" class="explanation"></div>
 
-    <div id="next" class="hidden">
-        <button onclick="nextQuestion()">次の問題</button>
+    <button
+        id="nextButton"
+        class="next-button hidden"
+        onclick="nextAfterExplanation()"
+    >
+        次の問題へ
+    </button>
+
+</div>
+
+
+<div id="continueScreen" class="hidden">
+
+    <div class="stage">
+        <h2>5問終了！</h2>
+
+        <div class="score" id="score"></div>
+
+        <p>
+        まだやる？
+        </p>
+
+        <button class="choice-button" onclick="continueQuiz()">はい</button>
+        <button class="choice-button" onclick="quitQuiz()">いいえ</button>
     </div>
 
 </div>
 
 
-<div id="blockResult" class="hidden">
+<div id="finalStageScreen" class="hidden">
 
-    <h2>5問終了</h2>
+    <div class="stage">
 
-    <p id="score"></p>
+        <h2>最終ステージ</h2>
 
-    <div id="continueArea">
+        <p>
+        残りの問題はあと
+        <span id="remainingCount"></span>
+        問です。
+        </p>
 
-        <p>まだやる？</p>
+        <p>
+        ここから最後まで一気にいきましょう。
+        </p>
 
-        <button onclick="continueQuiz()">はい</button>
-        <button onclick="endQuiz()">いいえ</button>
+        <button class="start-button" onclick="startFinalStage()">
+            進む
+        </button>
 
     </div>
 
 </div>
 
 
-<div id="finalStage" class="hidden">
+<div id="finishScreen" class="hidden">
 
-    <h2>最終ステージ</h2>
+    <div class="stage">
 
-    <p>
-        残りの問題は9問以下です。<br>
-        ここから最後まで走り抜けましょう。
-    </p>
+        <h2>終了！</h2>
 
-    <button onclick="startFinalStage()">進む</button>
+        <div class="score" id="finalScore"></div>
 
-</div>
+        <button onclick="quitQuiz()">最初に戻る</button>
 
+    </div>
 
-<div id="finalResult" class="hidden">
-
-    <h2>クイズ終了</h2>
-
-    <p id="finalScore"></p>
-
-</div>
-
-
-<div id="quit">
-    <button onclick="quitQuiz()">クイズをやめる</button>
 </div>
 
 
@@ -211,11 +208,10 @@ button {
 
 const questions = [
 
-/* 1 */
-{
-    question: `点字の1文字は、最大何個の点からできている？`,
-    answer: ["6"],
-    explanation: `点字は、2列×3段、6個の点を使って文字を表します。
+    {
+        question: `点字の1文字は、最大何個の点からできている？`,
+        answer: ["6"],
+        explanation: `点字は、2列×3段、6個の点を使って文字を表します。
 
 6個の点は、それぞれ「出っ張っている」「出っ張っていない」の2通り。
 
@@ -228,13 +224,12 @@ const questions = [
 実際には、64通りすべてを1文字ずつ割り当てるのではなく、かな、数字、アルファベット、濁点、句読点などを、点の組み合わせやルールを使って表現します。
 
 小さな6個の点の組み合わせが、文字や数字、記号を伝える仕組みになっているんですね。`
-},
+    },
 
-/* 2 */
-{
-    question: `2の5乗は？`,
-    answer: ["32"],
-    explanation: `32といえば、親知らずまで含めた大人の歯の本数です。
+    {
+        question: `2の5乗は？`,
+        answer: ["32"],
+        explanation: `32といえば、親知らずまで含めた大人の歯の本数です。
 
 親知らずは一番奥に生える4本の歯。名前の由来は、昔は親が子どもの歯の成長を見る時期を過ぎてから生えてくることが多かったため、「親が知らないうちに生える歯」と呼ばれたことにあります。
 
@@ -243,13 +238,12 @@ const questions = [
 人類の食生活が変わって顎が小さくなっても、歯の本数はそう簡単には変わらない。
 
 2の5乗から出てきた32という数字が、人間の進化の名残にも登場するんですね。`
-},
+    },
 
-/* 3 */
-{
-    question: `2の6乗は？`,
-    answer: ["64"],
-    explanation: `64といえば、Nintendo 64。
+    {
+        question: `2の6乗は？`,
+        answer: ["64"],
+        explanation: `64といえば、Nintendo 64。
 
 Nintendo 64の「64」は、64ビットCPUを搭載していたことをアピールするための名前でした。
 
@@ -264,13 +258,12 @@ Nintendo 64の「64」は、64ビットCPUを搭載していたことをアピ�
 Nintendo 64の時代には特別だった64が、今では当たり前になった。
 
 コンピューターの進化が、ひとつの数字から見えてきます。`
-},
+    },
 
-/* 4 */
-{
-    question: `2の7乗は？`,
-    answer: ["128"],
-    explanation: `128といえば、コンピューターの歴史にも128という数字が登場します。
+    {
+        question: `2の7乗は？`,
+        answer: ["128"],
+        explanation: `128といえば、コンピューターの歴史にも128という数字が登場します。
 
 1948年、イギリスで作られた初期のコンピューター、Manchester Babyの記憶装置は、合計で128バイトでした。
 
@@ -283,13 +276,12 @@ Nintendo 64の時代には特別だった64が、今では当たり前になっ�
 それでも、この小さな記憶装置を使って、コンピューターはプログラムを記憶し、実際に計算を行いました。
 
 2の7乗から出てきた128という数字が、コンピューターの「記憶」の歴史にも登場するんですね。`
-},
+    },
 
-/* 5 */
-{
-    question: `今年って昭和でいうと何年？`,
-    answer: [String(new Date().getFullYear() - 1925)],
-    explanation: `昭和、長いよね。
+    {
+        question: `今年って昭和でいうと何年？`,
+        answer: [String(new Date().getFullYear() - 1925)],
+        explanation: `昭和、長いよね。
 
 昭和は1926年から1989年まで、64年続きました。
 
@@ -300,13 +292,12 @@ Nintendo 64の時代には特別だった64が、今では当たり前になっ�
 25歳だった青年が、戦争の時代を生き、44歳で敗戦を迎え、その後の日本の復興と変化を見届けていった。
 
 昭和64年。ひとつの元号の中に、あまりにもたくさんの日本が入っています。`
-},
+    },
 
-/* 6 */
-{
-    question: `次の閏年は西暦何年？`,
-    answer: [String(getNextLeapYear())],
-    explanation: `うるう年には、2月に1日が追加されます。
+    {
+        question: `次の閏年は西暦何年？`,
+        answer: [getNextLeapYear()],
+        explanation: `うるう年には、2月に1日が追加されます。
 
 では、なぜ2月なのでしょう？
 
@@ -319,13 +310,12 @@ Nintendo 64の時代には特別だった64が、今では当たり前になっ�
 だから、1年の途中にある2月が、4年に一度だけ29日になるんですね。
 
 カレンダーの隅っこに、古代ローマの暦の名残が今も残っています。`
-},
+    },
 
-/* 7 */
-{
-    question: `地球が太陽の周りを一周するのにかかる時間は約何日？`,
-    answer: ["365"],
-    explanation: `地球が太陽を一周するのにかかる時間は、約365日。
+    {
+        question: `地球が太陽の周りを一周するのにかかる時間は約何日？`,
+        answer: ["365"],
+        explanation: `地球が太陽を一周するのにかかる時間は、約365日。
 
 でも、実際には365日ぴったりではなく、365日と6時間弱かかります。
 
@@ -345,26 +335,24 @@ Nintendo 64の時代には特別だった64が、今では当たり前になっ�
 地球が1年に少しだけ置いていく時間の余りを、人間は4年、100年、400年という長い時間をかけて帳尻合わせしている。
 
 2月29日は、地球とカレンダーのズレを片付けるための日なんですね。`
-},
+    },
 
-/* 8 */
-{
-    question: `1から100までの整数のうち、偶数はいくつ？`,
-    answer: ["50"],
-    explanation: `1から100までの半分が偶数なので、50個。
+    {
+        question: `1から100までの整数のうち、偶数はいくつ？`,
+        answer: ["50"],
+        explanation: `1から100までの半分が偶数なので、50個。
 
 偶数とは、2つずつ組にしたときに余りが出ない数です。「偶」という字にも「二つ一組」という意味があります。
 
 逆に、ペアを作ったとき1つ余るのが奇数。「奇」には「普通とは違う、対にならない」という意味があります。学生時代の僕のことです。
 
 数字を2つずつ並べてみると、「偶数」「奇数」という名前の由来がそのまま見えてきます。`
-},
+    },
 
-/* 9 */
-{
-    question: `6桁の数のうち、最大の素数は？`,
-    answer: ["999983"],
-    explanation: `6桁で最大の素数は999983。
+    {
+        question: `6桁の数のうち、最大の素数は？`,
+        answer: ["999983"],
+        explanation: `6桁で最大の素数は999983。
 
 999999まであと16しかありません。100万にかなり近いところまで来ても、まだ素数が見つかります。
 
@@ -375,13 +363,12 @@ Nintendo 64の時代には特別だった64が、今では当たり前になっ�
 2000年以上前に「素数には終わりがない」と分かっていたんですね。
 
 999983は6桁の世界では最後の素数。でも、その先には7桁、8桁、さらにずっと大きな素数が続いています。`
-},
+    },
 
-/* 10 */
-{
-    question: `3桁の自然数(100以上)の中で、最小の素数は？`,
-    answer: ["101"],
-    explanation: `素数は、1と自分自身でしか割り切れない数です。
+    {
+        question: `3桁の自然数(100以上)の中で、最小の素数は？`,
+        answer: ["101"],
+        explanation: `素数は、1と自分自身でしか割り切れない数です。
 
 実は、この性質はインターネットの暗号にも利用されています。
 
@@ -394,13 +381,12 @@ Nintendo 64の時代には特別だった64が、今では当たり前になっ�
 例えば、スマホで通販サイトを開いて、ログインして、クレジットカードで買い物をする。その裏側でも、こうした公開鍵暗号の仕組みが通信を安全にするために使われています。
 
 「1と自分自身でしか割り切れない」という小さな数字の性質が、スマホで安心して買い物をするところまでつながっているんですね。`
-},
+    },
 
-/* 11 */
-{
-    question: `3の3乗は？`,
-    answer: ["27"],
-    explanation: `3の3乗は27。
+    {
+        question: `3の3乗は？`,
+        answer: ["27"],
+        explanation: `3の3乗は27。
 
 私たちの身近にもこの数字は存在します。
 3×3×3の立体は、27個分の小さな立方体からできています。これこそが、ハンガリーの建築家エルネー・ルービックが考案した「ルービックキューブ」の構成です。
@@ -408,13 +394,12 @@ Nintendo 64の時代には特別だった64が、今では当たり前になっ�
 ルービックはもともと、学生に立体的な動きを理解させるための教材として、この立体を考えました。ところが、動かしているうちにバラバラになったパーツを元に戻すのが難しいことに気づき、パズルになっていきました。
 
 数学の「3×3×3」が、立体を理解するための道具から、世界中で遊ばれるパズルになったんですね。`
-},
+    },
 
-/* 12 */
-{
-    question: `2の3乗は？`,
-    answer: ["8"],
-    explanation: `8ビットとは、0と1を8個並べて情報を表す単位です。
+    {
+        question: `2の3乗は？`,
+        answer: ["8"],
+        explanation: `8ビットとは、0と1を8個並べて情報を表す単位です。
 
 1つの桁には0か1の2通りがあるので、8個並べると2⁸＝256通りの組み合わせができます。この8ビットをひとまとめにしたものが1バイトです。
 
@@ -423,13 +408,12 @@ Nintendo 64の時代には特別だった64が、今では当たり前になっ�
 ファミコンなどの初期のゲーム機で使われた、限られた音源を活かした電子的な音楽は、現在では「8ビット音楽」「チップチューン」と呼ばれることがあります。
 
 たった0と1の組み合わせから、画面だけでなく音楽まで生まれていたんですね。`
-},
+    },
 
-/* 13 */
-{
-    question: `2の10乗は？`,
-    answer: ["1024"],
-    explanation: `2の10乗は1024。
+    {
+        question: `2の10乗は？`,
+        answer: ["1024"],
+        explanation: `2の10乗は1024。
 
 コンピューターでは、0と1でデータを扱うため、2の累乗がよく登場します。1024という数字もそのひとつで、コンピューターでは長く、1024倍を区切りとしてデータ容量を表す慣習がありました。
 
@@ -445,13 +429,12 @@ Nintendo 64の時代には特別だった64が、今では当たり前になっ�
 さらにその先には、ペタ、エクサ、ゼタ、ヨタと続きます。
 
 昔は「ギガ」と聞くだけでとんでもなく大きな数字だったのに、今ではスマートフォンに何百ギガも入る。数字が大きくなるにつれて、僕たちの扱えるデータもずいぶん大きくなりましたね。`
-},
+    },
 
-/* 14 */
-{
-    question: `Q.ハチの巣は何角形？`,
-    answer: ["6"],
-    explanation: `答えは六角形。ハチなのに「六」です。
+    {
+        question: `ハチの巣は何角形？`,
+        answer: ["6"],
+        explanation: `答えは六角形。ハチなのに「六」です。
 
 六角形は隙間なく並べることができ、同じ広さの部屋を作るのに必要な材料も少なくて済む、とても効率のいい形。このように六角形を敷き詰めた構造をハニカム構造と呼びます。
 
@@ -460,13 +443,12 @@ Nintendo 64の時代には特別だった64が、今では当たり前になっ�
 ハチは人間が数学的に証明するより、ずっと昔から六角形の巣を作っていたわけです。
 
 自然の中では、とっくに答えが出ていたのかもしれませんね。`
-},
+    },
 
-/* 15 */
-{
-    question: `円周率を6桁書いてください`,
-    answer: ["314159"],
-    explanation: `円周率は、最初から「3.14……」という数字として発見されたわけではありません。
+    {
+        question: `円周率を6桁書いてください`,
+        answer: ["314159"],
+        explanation: `円周率は、最初から「3.14……」という数字として発見されたわけではありません。
 
 まず、線を一本引いて、その長さを直径として円を描いてみる。円をぐるっと測ってみると、直径のだいたい3倍ちょっとになる。
 
@@ -479,188 +461,168 @@ Nintendo 64の時代には特別だった64が、今では当たり前になっ�
 円を調べていたら、どんな円にも同じ数字が隠れていた。そして今もその数字を全部は知りきれないまま、僕たちは毎日のように円を描いている。
 
 それが円周率です。`
-},
+    },
 
-/* 16 */
-{
-    question: `以下の数列の空欄に当てはまる数字を入力してください
+    {
+        question: `以下の数列の空欄に当てはまる数字を入力してください
 1、1、2、3、5、□`,
-    answer: ["8"],
-    explanation: `これはフィボナッチ数列。前の2つの数を足して次の数を作ります。
+        answer: ["8"],
+        explanation: `これはフィボナッチ数列。前の2つの数を足して次の数を作ります。
 
 この数列は、植物の葉や種の並びなど、自然界に現れるパターンとの関連で有名です。
 
 数学は人間が作ったものなのに、自然の中にも似た規則が見つかるのが面白いところです。`
-},
+    },
 
-/* 17 */
-{
-    question: `江戸幕府の将軍は全部で何人？`,
-    answer: ["15"],
-    explanation: `徳川将軍は家康から慶喜まで15人。江戸幕府は約260年続きました。
+    {
+        question: `江戸幕府の将軍は全部で何人？`,
+        answer: ["15"],
+        explanation: `徳川将軍は家康から慶喜まで15人。江戸幕府は約260年続きました。
 
 江戸時代の前期には、街道や宿場町、城下町などが整備され、全国を結ぶ社会の土台が作られていきました。中期になると社会が安定し、歌舞伎や浮世絵、出版など、町人を中心としたエンタメ文化が花開きます。
 
 ところが後期になると、外国船の来航や幕府の財政難などで社会が大きく揺らぎ、幕府の力も次第に弱まっていきます。そして1867年の大政奉還、1868年の明治維新へ。
 
 同じ「江戸時代」と呼ばれる約260年の間に、戦乱の時代からインフラが整った社会、そして豊かな文化の時代を経て、近代日本へと大きく姿を変えていったんですね。`
-},
+    },
 
-/* 18 */
-{
-    question: `応仁の乱が始まったのは西暦何年？`,
-    answer: ["1467"],
-    explanation: `1467年に始まった応仁の乱は、将軍家の後継者問題や、有力大名たちの家督争い・勢力争いなど、さまざまな事情が絡み合って起こった戦乱です。
+    {
+        question: `応仁の乱が始まったのは西暦何年？`,
+        answer: ["1467"],
+        explanation: `1467年に始まった応仁の乱は、将軍家の後継者問題や、有力大名たちの家督争い・勢力争いなど、さまざまな事情が絡み合って起こった戦乱です。
 
 義政は弟の義視を後継者にしましたが、その翌年、妻の日野富子との間に男子の義尚が誕生。ここに大名たちの思惑も加わり、東軍と西軍に分かれて戦うことになります。
 
 ところが戦いが始まると、敵味方の関係まで次第に複雑になり、11年間も続いた末、明確な勝者がないまま終わりました。
 
 京都を焼け野原にしてまで11年も戦ったのに、結局「で、誰が勝ったの？」となる。応仁の乱、なかなかややこしい戦です。`
-},
+    },
 
-/* 19 */
-{
-    question: `明治維新が起こったのは西暦何年？`,
-    answer: ["1868"],
-    explanation: `明治維新によって政治の仕組みだけでなく、人々の暮らしも大きく変わっていきました。1872年には「学制」が公布され、全国に近代的な学校制度が作られ始めます。
+    {
+        question: `明治維新が起こったのは西暦何年？`,
+        answer: ["1868"],
+        explanation: `明治維新によって政治の仕組みだけでなく、人々の暮らしも大きく変わっていきました。1872年には「学制」が公布され、全国に近代的な学校制度が作られ始めます。
 
 それまでの日本にも寺子屋などの教育はありましたが、明治になると、全国の子どもたちを学校で学ばせるという仕組みが整えられていきました。
 
 今では当たり前の「子どもが学校に通う」という生活も、実は明治時代に形作られていったものなんですね。`
-},
+    },
 
-/* 20 */
-{
-    question: `関ヶ原の戦いが起こったのは西暦何年？`,
-    answer: ["1600"],
-    explanation: `関ヶ原は現在も岐阜県に実際に残っている地名です。古戦場には石碑や陣跡などが残され、当時の地形を歩いて見ることができます。
+    {
+        question: `関ヶ原の戦いが起こったのは西暦何年？`,
+        answer: ["1600"],
+        explanation: `関ヶ原は現在も岐阜県に実際に残っている地名です。古戦場には石碑や陣跡などが残され、当時の地形を歩いて見ることができます。
 
 東軍・西軍それぞれの武将がどこに陣を構えたのかも現地で確認できます。
 
 400年以上前の「天下分け目の戦い」が、教科書の中だけではなく、今も歩ける場所として残っているんですね。`
-},
+    },
 
-/* 21 */
-{
-    question: `鉄砲が日本に伝来したのは西暦何年？`,
-    answer: ["1543"],
-    explanation: `1543年、種子島に伝わった鉄砲は、当時としては非常に強力な兵器でした。しかし、火縄銃は雨に弱く、火薬や弾丸も必要で、扱いにも訓練が必要でした。
+    {
+        question: `鉄砲が日本に伝来したのは西暦何年？`,
+        answer: ["1543"],
+        explanation: `1543年、種子島に伝わった鉄砲は、当時としては非常に強力な兵器でした。しかし、火縄銃は雨に弱く、火薬や弾丸も必要で、扱いにも訓練が必要でした。
 
 それでも日本人は驚くほど早く鉄砲を国産化します。伝来した鉄砲を分解して構造を研究し、わずかな期間で大量生産できるようになりました。
 
 新しいものを見たら、とりあえず作ってみる。
 
 これが後の日本のものづくりにも繋がる、日本人の「魔改造力」のご先祖様なのかもしれません。`
-},
+    },
 
-/* 22 */
-{
-    question: `現在流通している日本の硬貨のうち、最も額面が高いのは何円玉？`,
-    answer: ["500"],
-    explanation: `500円玉は、日本で現在流通している硬貨の中で最も高額な硬貨です。実はこの500円玉、かつて偽造に悩まされたことがあります。韓国の500ウォン硬貨を加工して、日本の500円硬貨として使う偽造事件が相次いだため、その後、500円玉は何度も改良されました。現在の500円玉には、バイカラー構造や異形斜めギザ、微細文字、潜像など、さまざまな偽造防止技術が仕込まれています。普段何気なく使っている500円玉、実はかなりのハイテク硬貨なんですね。`
-},
+    {
+        question: `現在流通している日本の硬貨のうち、最も額面が高いのは何円玉？`,
+        answer: ["500"],
+        explanation: `500円玉は、日本で現在流通している硬貨の中で最も高額な硬貨です。実はこの500円玉、かつて偽造に悩まされたことがあります。韓国の500ウォン硬貨を加工して、日本の500円硬貨として使う偽造事件が相次いだため、その後、500円玉は何度も改良されました。現在の500円玉には、バイカラー構造や異形斜めギザ、微細文字、潜像など、さまざまな偽造防止技術が仕込まれています。普段何気なく使っている500円玉、実はかなりのハイテク硬貨なんですね。`
+    },
 
-/* 23 */
-{
-    question: `架空の木がモチーフに描かれている硬貨は何円玉？`,
-    answer: ["1"],
-    explanation: `1円玉には若木が描かれています。これ実は特定の樹種ではなく、成長や未来を象徴した架空の樹木なんです。
+    {
+        question: `架空の木がモチーフに描かれている硬貨は何円玉？`,
+        answer: ["1"],
+        explanation: `1円玉には若木が描かれています。これ実は特定の樹種ではなく、成長や未来を象徴した架空の樹木なんです。
 ちなみに、この1円玉はアルミニウム製。実は1円玉は、額面より製造にかかる費用のほうが高いと言われることがあります。1円なのに、1円では作れない。なんだか不思議な硬貨ですね。`
-},
+    },
 
-/* 24 */
-{
-    question: `稲穂が描かれている硬貨は何円玉？`,
-    answer: ["5"],
-    explanation: `5円玉には稲穂が描かれています。
+    {
+        question: `稲穂が描かれている硬貨は何円玉？`,
+        answer: ["5"],
+        explanation: `5円玉には稲穂が描かれています。
 
 稲から収穫されたものは、籾、玄米、白米、そして炊けばご飯と、状態によって呼び名が変わります。
 米に対する日本人の熱量が伺えますね。
 
 一方、英語では米を状態変化に関わらず一口に「rice」と言いますが、パンには bread、loaf、slice、bun、roll、toast など、形や状態によって別々の単語があります。
 パンに対する英語圏の人々の熱量が伺えますね。`
-},
+    },
 
-/* 25 */
-{
-    question: `パンの重さを表す「一斤」は何グラム以上？`,
-    answer: ["340"],
-    explanation: `「一斤＝340g」という意味ではなく、現在の包装食パンでは340gが最低重量として定められています。ちなみに「斤」という単位は昔から使われてきたため、時代や用途によって異なる重さで扱われてきました。検索すると600gという数字が出てくるのもそのためです。`
-},
+    {
+        question: `パンの重さを表す「一斤」は何グラム以上？`,
+        answer: ["340"],
+        explanation: `「一斤＝340g」という意味ではなく、現在の包装食パンでは340gが最低重量として定められています。ちなみに「斤」という単位は昔から使われてきたため、時代や用途によって異なる重さで扱われてきました。検索すると600gという数字が出てくるのもそのためです。`
+    },
 
-/* 26 */
-{
-    question: `桜が描かれている硬貨は何円玉？`,
-    answer: ["100"],
-    explanation: `100円玉には桜が描かれています。
+    {
+        question: `桜が描かれている硬貨は何円玉？`,
+        answer: ["100"],
+        explanation: `100円玉には桜が描かれています。
 日本の桜といえばソメイヨシノを思い浮かべる人も多いですが、実はソメイヨシノは日本に昔からあった野生の桜ではありません。江戸時代末期から明治時代にかけて広まった園芸品種です。
 
 しかもソメイヨシノは、ほぼすべて同じ遺伝子を持つクローンです。種から同じソメイヨシノを増やすのではなく、接ぎ木などで同じ木を人工的にコピーすることで全国に広がりました。
 
 だからソメイヨシノは、同じ地域ならほぼ同じタイミングで一斉に咲きます。気温などの条件が似ているため、同じ遺伝的性質を持った木々が一斉に反応するからです。`
-},
+    },
 
-/* 27 */
-{
-    question: `菊が描かれている硬貨は何円玉？`,
-    answer: ["50"],
-    explanation: `50円玉には菊が描かれています。
+    {
+        question: `菊が描かれている硬貨は何円玉？`,
+        answer: ["50"],
+        explanation: `50円玉には菊が描かれています。
 菊には食用になる種類もあります。では、なぜ花なのに食べるのでしょう？ 花は「食べられるかどうか」だけでなく、「味はどうか」「料理に合うか」「見た目が美しいか」など、いろいろな条件が揃って初めて食材になります。食用菊は、その条件を満たしてきた花なのです。`
-},
+    },
 
-/* 28 */
-{
-    question: `平等院鳳凰堂が描かれている硬貨は何円玉？`,
-    answer: ["10"],
-    explanation: `10円玉に描かれているのは平等院鳳凰堂です。1053年、藤原頼通によって建てられた阿弥陀堂で、当時広まっていた浄土信仰の「極楽浄土」を表すように、池の中島に建てられています。水面に映る姿は、極楽の宮殿を思わせるように設計されました。ちなみに、建てられた当時から「鳳凰堂」と呼ばれていたわけではなく、この名前が定着したのは江戸時代初め頃です。1951年には10円硬貨のデザインに選ばれました。`
-},
+    {
+        question: `平等院鳳凰堂が描かれている硬貨は何円玉？`,
+        answer: ["10"],
+        explanation: `10円玉に描かれているのは平等院鳳凰堂です。1053年、藤原頼通によって建てられた阿弥陀堂で、当時広まっていた浄土信仰の「極楽浄土」を表すように、池の中島に建てられています。水面に映る姿は、極楽の宮殿を思わせるように設計されました。ちなみに、建てられた当時から「鳳凰堂」と呼ばれていたわけではなく、この名前が定着したのは江戸時代初め頃です。1951年には10円硬貨のデザインに選ばれました。`
+    },
 
-/* 29 */
-{
-    question: `ワイマール憲法が制定されたのは西暦何年？`,
-    answer: ["1919"],
-    explanation: `1919年に制定されたワイマール憲法は、第一次世界大戦に負けて皇帝が退位したドイツで、新しい国の仕組みを作るために定められた憲法です。それまでのドイツ帝国では皇帝が大きな権力を持っていましたが、ワイマール憲法では国民が選挙で議会を選び、議会を中心に政治を行う民主的な仕組みが定められました。女性にも選挙権が認められるなど、当時としてはかなり進んだ憲法でした。「ワイマール」という名前は、この憲法を制定する国民議会がワイマールで開かれたことに由来します。`
-},
+    {
+        question: `ワイマール憲法が制定されたのは西暦何年？`,
+        answer: ["1919"],
+        explanation: `1919年に制定されたワイマール憲法は、第一次世界大戦に負けて皇帝が退位したドイツで、新しい国の仕組みを作るために定められた憲法です。それまでのドイツ帝国では皇帝が大きな権力を持っていましたが、ワイマール憲法では国民が選挙で議会を選び、議会を中心に政治を行う民主的な仕組みが定められました。女性にも選挙権が認められるなど、当時としてはかなり進んだ憲法でした。「ワイマール」という名前は、この憲法を制定する国民議会がワイマールで開かれたことに由来します。`
+    },
 
-/* 30 */
-{
-    question: `平安京が置かれたのは西暦何年？
+    {
+        question: `平安京が置かれたのは西暦何年？
 次のうちから選べ
 710/784/794`,
-    type: "choice",
-    choices: ["710", "784", "794"],
-    answer: ["794"],
-    explanation: `710年の平城京から794年の平安京へ。実はその間に784年の長岡京を挟んでいます。長岡京は災害や疫病、政治的な事件なども重なり、わずか10年ほどでその役割を終えました。「平城」は古くからこの地域にあった地名「なら」に由来し、「平安」は文字通り、平和で安らかな都を願った名前です。鳴くよウグイス。`
-},
+        answer: ["794"],
+        explanation: `710年の平城京から794年の平安京へ。実はその間に784年の長岡京を挟んでいます。長岡京は災害や疫病、政治的な事件なども重なり、わずか10年ほどでその役割を終えました。「平城」は古くからこの地域にあった地名「なら」に由来し、「平安」は文字通り、平和で安らかな都を願った名前です。鳴くよウグイス。`
+    },
 
-/* 31 */
-{
-    question: `鎌倉幕府が成立したのは西暦何年？`,
-    answer: ["1185", "1192"],
-    explanation: `西暦1185年（文治元年）は、日本の歴史において平家が滅亡し、源頼朝が全国の守護・地頭の設置を朝廷から認められた、鎌倉幕府の実質的な成立年とされる重要な節目です。かつての「1192年（征夷大将軍就任）」に代わり、現在の教科書でも採用されている有力な説です。
+    {
+        question: `鎌倉幕府が成立したのは西暦何年？`,
+        answer: ["1185", "1192"],
+        explanation: `西暦1185年（文治元年）は、日本の歴史において平家が滅亡し、源頼朝が全国の守護・地頭の設置を朝廷から認められた、鎌倉幕府の実質的な成立年とされる重要な節目です。かつての「1192年（征夷大将軍就任）」に代わり、現在の教科書でも採用されている有力な説です。
 僕はイイクニの方が好きです。`
-},
+    },
 
-/* 32 */
-{
-    question: `A×B×C＝A＋B＋C
+    {
+        question: `A×B×C＝A＋B＋C
 この式に当てはまる1〜9までの整数で、ABCを入力してください`,
-    answer: ["123"],
-    explanation: `1×2×3=6
+        answer: ["123"],
+        explanation: `1×2×3=6
 そして
 1＋2＋3＝6
 
 となります。
 
 6のように、自分自身が自分自身を除く正の約数の和に等しくなる自然数を完全数といいます。`
-},
+    },
 
-/* 33 */
-{
-    question: `ルート4を数値に直すと？(最大6桁まで)`,
-    answer: ["2"],
-    explanation: `そもそも平方根とは、2乗すると元の数になる数のこと。
+    {
+        question: `ルート4を数値に直すと？(最大6桁まで)`,
+        answer: ["2"],
+        explanation: `そもそも平方根とは、2乗すると元の数になる数のこと。
 
 例えば、
 
@@ -691,13 +653,12 @@ Nintendo 64の時代には特別だった64が、今では当たり前になっ�
 こうした数は現在では無理数と呼ばれています。
 
 つまり平方根は、単に「√という記号を使う計算」ではなく、人間が「数とは何なのか」を考え直すきっかけにもなったんですね。`
-},
+    },
 
-/* 34 */
-{
-    question: `ルート9を数値に直すと？(最大6桁まで)`,
-    answer: ["3"],
-    explanation: `平方根は、実際の生活でも使われています。
+    {
+        question: `ルート9を数値に直すと？(最大6桁まで)`,
+        answer: ["3"],
+        explanation: `平方根は、実際の生活でも使われています。
 
 例えば、部屋の縦と横の長さが分かっていて、対角線の長さを知りたいとします。
 
@@ -714,67 +675,50 @@ Nintendo 64の時代には特別だった64が、今では当たり前になっ�
 こうした計算は、建築や測量だけでなく、地図やGPS、コンピューター上の距離計算などにも使われています。
 
 平方根は、「測る」を「計算する」に変えてくれる道具なんですね。`
-},
+    },
 
-/* 35 */
-{
-    question: `ルート2を数値に直すといくつ？(最大6桁まで)`,
-    answer: ["141421"],
-    explanation: `1.41421356...
+    {
+        question: `ルート2を数値に直すといくつ？(最大6桁まで)`,
+        answer: ["141421"],
+        explanation: `1.41421356...
 ヒトヨヒトヨニヒトミゴロと覚えましょう`
-},
+    },
 
-/* 36 */
-{
-    question: `ルート3を数値に直すといくつ？(最大6桁まで)`,
-    answer: ["173205"],
-    explanation: `1.7320508...
+    {
+        question: `ルート3を数値に直すといくつ？(最大6桁まで)`,
+        answer: ["173205"],
+        explanation: `1.7320508...
 ヒトナミニオゴレヤと覚えましょう`
-},
+    },
 
-/* 37 */
-{
-    question: `ルート5を数値に直すといくつ？(最大6桁まで)`,
-    answer: ["223606"],
-    explanation: `2.2360679...
+    {
+        question: `ルート5を数値に直すといくつ？(最大6桁まで)`,
+        answer: ["223606"],
+        explanation: `2.2360679...
 フジサンロクオウムナクと覚えましょう`
-},
+    },
 
-/* 38 */
-{
-    question: `3² × 5 × 101=？`,
-    answer: ["4545"],
-    explanation: `これを作るのに割と大きな素数が関わっているんですね`
-}
+    {
+        question: `3² × 5 × 101=？`,
+        answer: ["4545"],
+        explanation: `これを作るのに割と大きな素数が関わっているんですね`
+    }
 
 ];
-
 
 let remainingQuestions = [];
 let currentQuestion = null;
 
 let totalAnswered = 0;
 let correctAnswers = 0;
-let blockAnswered = 0;
-let blockCorrect = 0;
 
-let answered = false;
-let finalStageShown = false;
+let currentBlockAnswered = 0;
+let finalStage = false;
 
 
 /* =========================
-   うるう年
+   年に関する問題
 ========================= */
-
-function isLeapYear(year) {
-
-    return (
-        year % 400 === 0 ||
-        (year % 4 === 0 && year % 100 !== 0)
-    );
-
-}
-
 
 function getNextLeapYear() {
 
@@ -786,29 +730,30 @@ function getNextLeapYear() {
         year++;
     }
 
-    return year;
+    return String(year);
+}
+
+function isLeapYear(year) {
+
+    return (
+        year % 400 === 0 ||
+        (year % 4 === 0 && year % 100 !== 0)
+    );
 
 }
 
 
 /* =========================
-   問題をシャッフル
+   画面切り替え
 ========================= */
 
-function shuffle(array) {
+function hideAllScreens() {
 
-    const shuffled = [...array];
-
-    for (let i = shuffled.length - 1; i > 0; i--) {
-
-        const j = Math.floor(Math.random() * (i + 1));
-
-        [shuffled[i], shuffled[j]] =
-        [shuffled[j], shuffled[i]];
-
-    }
-
-    return shuffled;
+    document.getElementById("startScreen").classList.add("hidden");
+    document.getElementById("quizScreen").classList.add("hidden");
+    document.getElementById("continueScreen").classList.add("hidden");
+    document.getElementById("finalStageScreen").classList.add("hidden");
+    document.getElementById("finishScreen").classList.add("hidden");
 
 }
 
@@ -819,27 +764,14 @@ function shuffle(array) {
 
 function startQuiz() {
 
-    remainingQuestions = shuffle(questions);
+    remainingQuestions = [...questions];
 
     totalAnswered = 0;
     correctAnswers = 0;
+    currentBlockAnswered = 0;
+    finalStage = false;
 
-    blockAnswered = 0;
-    blockCorrect = 0;
-
-    finalStageShown = false;
-
-    document.getElementById("blockResult")
-        .classList.add("hidden");
-
-    document.getElementById("finalStage")
-        .classList.add("hidden");
-
-    document.getElementById("finalResult")
-        .classList.add("hidden");
-
-    document.getElementById("quizArea")
-        .classList.remove("hidden");
+    hideAllScreens();
 
     nextQuestion();
 
@@ -847,328 +779,174 @@ function startQuiz() {
 
 
 /* =========================
-   次の問題
+   問題をランダムに取り出す
 ========================= */
 
 function nextQuestion() {
 
-    /*
-       5問終わったあとに呼ばれた場合、
-       残りが9問以下なら最終ステージ画面を挟む。
-    */
-
-    if (
-        blockAnswered >= 5 &&
-        remainingQuestions.length <= 9 &&
-        !finalStageShown
-    ) {
-
-        showFinalStage();
-        return;
-
-    }
-
-
     if (remainingQuestions.length === 0) {
-
-        showFinalResult();
+        finishQuiz();
         return;
-
     }
 
-
-    answered = false;
-
-    document.getElementById("result").textContent = "";
-    document.getElementById("explanation").innerHTML = "";
-
-    document.getElementById("next")
-        .classList.add("hidden");
-
-
-    const answerArea =
-        document.getElementById("answerArea");
-
-    const choices =
-        document.getElementById("choices");
-
-
-    answerArea.classList.remove("hidden");
-
-    choices.classList.add("hidden");
-
-    choices.innerHTML = "";
-
-
-    /*
-       シャッフル済みの残りから
-       先頭を1問取り出す。
-
-       取り出した問題はremainingQuestionsから
-       消えるので、同じ周回では二度と出ない。
-    */
+    const randomIndex =
+        Math.floor(Math.random() * remainingQuestions.length);
 
     currentQuestion =
-        remainingQuestions.shift();
+        remainingQuestions.splice(randomIndex, 1)[0];
 
-
-    document.getElementById("question").innerHTML =
+    document.getElementById("question").textContent =
         currentQuestion.question;
 
+    document.getElementById("answer").value = "";
 
-    if (currentQuestion.type === "choice") {
+    document.getElementById("answer").disabled = false;
 
-        answerArea.classList.add("hidden");
+    document.getElementById("result").textContent = "";
 
-        choices.classList.remove("hidden");
+    document.getElementById("explanation").textContent = "";
 
+    document.getElementById("nextButton").classList.add("hidden");
 
-        currentQuestion.choices.forEach(choice => {
+    document.getElementById("quizScreen").classList.remove("hidden");
 
-            const button =
-                document.createElement("button");
-
-            button.textContent = choice;
-
-            button.className = "choice";
-
-            button.onclick = function() {
-
-                checkAnswerValue(choice);
-
-            };
-
-            choices.appendChild(button);
-
-        });
-
-
-    } else {
-
-        document.getElementById("answer").value = "";
-
-        document.getElementById("answer").focus();
-
-    }
+    document.getElementById("answer").focus();
 
 }
 
 
 /* =========================
-   入力問題
+   答え合わせ
 ========================= */
 
 function checkAnswer() {
 
-    if (answered) return;
-
     const answer =
         document.getElementById("answer").value.trim();
-
-    checkAnswerValue(answer);
-
-}
-
-
-/* =========================
-   正解判定
-========================= */
-
-function checkAnswerValue(answer) {
-
-    if (answered) return;
-
-
-    answered = true;
 
     const result =
         document.getElementById("result");
 
-    const explanation =
-        document.getElementById("explanation");
+    if (answer === "") {
+        return;
+    }
 
+    document.getElementById("answer").disabled = true;
 
     totalAnswered++;
-    blockAnswered++;
-
+    currentBlockAnswered++;
 
     if (currentQuestion.answer.includes(answer)) {
 
         correctAnswers++;
-        blockCorrect++;
 
         result.textContent = "正解！";
 
     } else {
 
-        result.textContent = "ちがいます";
+        result.textContent =
+            "ちがいます。正解は " +
+            currentQuestion.answer[0] +
+            " です。";
 
     }
 
-
-    explanation.innerHTML =
+    document.getElementById("explanation").textContent =
         currentQuestion.explanation;
 
-
-    /*
-       5問終了したら
-       「次の問題」ではなくブロック結果へ。
-    */
-
-    if (
-        blockAnswered >= 5 ||
-        remainingQuestions.length === 0
-    ) {
-
-        document.getElementById("next")
-            .classList.add("hidden");
-
-        setTimeout(function() {
-
-            showBlockResult();
-
-        }, 300);
-
-    } else {
-
-        document.getElementById("next")
-            .classList.remove("hidden");
-
-    }
+    document.getElementById("nextButton").classList.remove("hidden");
 
 }
 
 
 /* =========================
-   ブロック終了
+   解説後の「次の問題へ」
 ========================= */
 
-function showBlockResult() {
+function nextAfterExplanation() {
 
-    document.getElementById("blockResult")
-        .classList.remove("hidden");
+    /*
+     * まだブロック途中なら、そのまま次の問題へ
+     */
+    if (!finalStage && currentBlockAnswered < 5) {
 
-    document.getElementById("quizArea")
-        .classList.add("hidden");
+        nextQuestion();
 
-    document.getElementById("quit")
-        .classList.add("hidden");
-
-
-    document.getElementById("score").textContent =
-        `${correctAnswers} / ${totalAnswered}`;
+        return;
+    }
 
 
     /*
-       全問終了なら
-       「まだやる？」を出さずに最終結果へ。
-    */
+     * 最終ステージ中なら、
+     * 残りがなくなるまで続ける
+     */
+    if (finalStage) {
 
-    if (remainingQuestions.length === 0) {
+        if (remainingQuestions.length === 0) {
 
-        document.getElementById("continueArea")
-            .innerHTML = `
-                <button onclick="showFinalResult()">
-                    結果を見る
-                </button>
-            `;
+            finishQuiz();
 
-    } else {
+        } else {
 
-        document.getElementById("continueArea")
-            .innerHTML = `
-                <p>まだやる？</p>
-                <button onclick="continueQuiz()">はい</button>
-                <button onclick="endQuiz()">いいえ</button>
-            `;
+            nextQuestion();
 
+        }
+
+        return;
     }
+
+
+    /*
+     * 5問終了
+     *
+     * ここではまだ「まだやる？」を表示しない。
+     * 5問目の解説を読んでから、
+     * 「次の問題へ」を押した時点で表示する。
+     */
+
+    showContinueScreen();
 
 }
 
 
 /* =========================
-   はい
+   5問終了後
+========================= */
+
+function showContinueScreen() {
+
+    hideAllScreens();
+
+    const score =
+        document.getElementById("score");
+
+    score.textContent =
+        correctAnswers + " / " + totalAnswered;
+
+    document
+        .getElementById("continueScreen")
+        .classList.remove("hidden");
+
+}
+
+
+/* =========================
+   「はい」
 ========================= */
 
 function continueQuiz() {
 
-    document.getElementById("blockResult")
-        .classList.add("hidden");
-
-    document.getElementById("quit")
-        .classList.remove("hidden");
-
+    currentBlockAnswered = 0;
 
     /*
-       次のブロックに進むので
-       5問カウンターをリセット。
-    */
-
-    blockAnswered = 0;
-    blockCorrect = 0;
-
-
-    /*
-       残りが9問以下なら
-       最終ステージ画面を挟む。
-    */
-
-    if (
-        remainingQuestions.length <= 9 &&
-        !finalStageShown
-    ) {
+     * 残り9問以下なら最終ステージへ
+     */
+    if (remainingQuestions.length <= 9) {
 
         showFinalStage();
 
-    } else {
-
-        document.getElementById("quizArea")
-            .classList.remove("hidden");
-
-        nextQuestion();
-
+        return;
     }
-
-}
-
-
-/* =========================
-   最終ステージ
-========================= */
-
-function showFinalStage() {
-
-    finalStageShown = true;
-
-    document.getElementById("quizArea")
-        .classList.add("hidden");
-
-    document.getElementById("blockResult")
-        .classList.add("hidden");
-
-    document.getElementById("finalStage")
-        .classList.remove("hidden");
-
-}
-
-
-/* =========================
-   最終ステージへ進む
-========================= */
-
-function startFinalStage() {
-
-    document.getElementById("finalStage")
-        .classList.add("hidden");
-
-    document.getElementById("quizArea")
-        .classList.remove("hidden");
-
-
-    blockAnswered = 0;
-    blockCorrect = 0;
-
 
     nextQuestion();
 
@@ -1176,79 +954,54 @@ function startFinalStage() {
 
 
 /* =========================
-   いいえ
+   最終ステージ表示
 ========================= */
 
-function endQuiz() {
+function showFinalStage() {
 
-    document.getElementById("blockResult")
-        .classList.add("hidden");
+    hideAllScreens();
 
-    document.getElementById("quizArea")
-        .classList.add("hidden");
+    finalStage = true;
 
-    document.getElementById("finalStage")
-        .classList.add("hidden");
+    document.getElementById("remainingCount").textContent =
+        remainingQuestions.length;
 
-    document.getElementById("quit")
+    document
+        .getElementById("finalStageScreen")
         .classList.remove("hidden");
-
-
-    document.getElementById("finalResult")
-        .classList.remove("hidden");
-
-
-    document.getElementById("finalScore").innerHTML =
-        `正答数：${correctAnswers} / ${totalAnswered}<br><br>
-         まだ ${remainingQuestions.length} 問残っています。`;
 
 }
 
 
 /* =========================
-   最終結果
+   最終ステージ開始
 ========================= */
 
-function showFinalResult() {
+function startFinalStage() {
 
-    document.getElementById("quizArea")
-        .classList.add("hidden");
+    currentBlockAnswered = 0;
 
-    document.getElementById("blockResult")
-        .classList.add("hidden");
-
-    document.getElementById("finalStage")
-        .classList.add("hidden");
-
-    document.getElementById("quit")
-        .classList.remove("hidden");
-
-
-    document.getElementById("finalResult")
-        .classList.remove("hidden");
-
-
-    document.getElementById("finalScore").innerHTML =
-        `正答数：${correctAnswers} / ${totalAnswered}<br><br>
-         全問終了！`;
+    nextQuestion();
 
 }
 
 
 /* =========================
-   Enterキー
+   クイズ終了
 ========================= */
 
-document.getElementById("answer")
-.addEventListener("keydown", function(event) {
+function finishQuiz() {
 
-    if (event.key === "Enter") {
+    hideAllScreens();
 
-        checkAnswer();
+    document.getElementById("finalScore").textContent =
+        correctAnswers + " / " + totalAnswered;
 
-    }
+    document
+        .getElementById("finishScreen")
+        .classList.remove("hidden");
 
-});
+}
 
 
 /* =========================
@@ -1263,10 +1016,20 @@ function quitQuiz() {
 
 
 /* =========================
-   スタート
+   Enterキーでも回答
 ========================= */
 
-startQuiz();
+document
+    .getElementById("answer")
+    .addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+
+            checkAnswer();
+
+        }
+
+    });
 
 </script>
 
