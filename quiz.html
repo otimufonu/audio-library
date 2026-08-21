@@ -302,7 +302,9 @@ function updateProgress() {
 
 function startQuiz() {
 
-    remainingQuestions = [...questions];
+    remainingQuestions = questions.filter(function(q) {
+        return !solvedQuestions.includes(q.id);
+    });
 
     totalAnswered = 0;
     correctAnswers = 0;
