@@ -149,7 +149,7 @@ button {
 <div id="continueScreen" class="hidden">
 
     <div class="stage">
-        <h2>10問終了！</h2>
+        <h2>5問終了！</h2>
 
         <div class="score" id="score"></div>
 
@@ -162,6 +162,28 @@ button {
     </div>
 
 </div>
+
+<div id="finalStageScreen" class="hidden">
+
+    <div class="stage">
+
+        <h2>最終ステージ</h2>
+
+        <p>
+        残りの問題はあと
+        <span id="remainingCount"></span>
+        問です。
+        </p>
+
+        <p>
+        ここから最後まで一気にいきましょう。
+        </p>
+
+        <button class="start-button" onclick="startFinalStage()">
+            進む
+        </button>
+
+    </div>
 
 </div>
 
@@ -179,10 +201,8 @@ button {
 
 </div>
 
-
 <!-- クイズデータ -->
 <script src="quiz_data.js"></script>
-
 
 <script>
 
@@ -197,7 +217,7 @@ let totalAnswered = 0;
 let correctAnswers = 0;
 
 let currentBlockAnswered = 0;
-
+let finalStage = false;
 
 /* =========================
    年に関する問題
@@ -225,7 +245,6 @@ function isLeapYear(year) {
 
 }
 
-
 /* =========================
    画面切り替え
 ========================= */
@@ -240,7 +259,6 @@ function hideAllScreens() {
 
 }
 
-
 /* =========================
    クイズ開始
 ========================= */
@@ -251,14 +269,14 @@ function startQuiz() {
 
     totalAnswered = 0;
     correctAnswers = 0;
-    currentGameAnswered = 0;
+    currentBlockAnswered = 0;
+    finalStage = false;
 
     hideAllScreens();
 
     nextQuestion();
 
 }
-
 
 /* =========================
    問題をランダムに取り出す
@@ -300,7 +318,6 @@ function nextQuestion() {
 
 }
 
-
 /* =========================
    答え合わせ
 ========================= */
@@ -320,7 +337,7 @@ function checkAnswer() {
     document.getElementById("answer").disabled = true;
 
     totalAnswered++;
-    currentGameAnswered++;
+    currentBlockAnswered++;
 
     const correct =
         currentQuestion.answer.includes(answer);
@@ -355,16 +372,30 @@ function checkAnswer() {
 
 }
 
-
 /* =========================
    解説後の「次の問題へ」
 ========================= */
 
 function nextAfterExplanation() {
 
-    if (currentGameAnswered < 10) {
+    if (!finalStage && currentBlockAnswered < 5) {
 
         nextQuestion();
+
+        return;
+    }
+
+    if (finalStage) {
+
+        if (remainingQuestions.length === 0) {
+
+            finishQuiz();
+
+        } else {
+
+            nextQuestion();
+
+        }
 
         return;
     }
@@ -373,9 +404,8 @@ function nextAfterExplanation() {
 
 }
 
-
 /* =========================
-   10問終了後
+   5問終了後
 ========================= */
 
 function showContinueScreen() {
@@ -394,18 +424,17 @@ function showContinueScreen() {
 
 }
 
-
 /* =========================
    「はい」
 ========================= */
 
 function continueQuiz() {
 
-    currentGameAnswered = 0;
+    currentBlockAnswered = 0;
 
-    if (remainingQuestions.length === 0) {
+    if (remainingQuestions.length <= 9) {
 
-        finishQuiz();
+        showFinalStage();
 
         return;
     }
@@ -414,8 +443,36 @@ function continueQuiz() {
 
 }
 
+/* =========================
+   最終ステージ表示
+========================= */
 
+function showFinalStage() {
 
+    hideAllScreens();
+
+    finalStage = true;
+
+    document.getElementById("remainingCount").textContent =
+        remainingQuestions.length;
+
+    document
+        .getElementById("finalStageScreen")
+        .classList.remove("hidden");
+
+}
+
+/* =========================
+   最終ステージ開始
+========================= */
+
+function startFinalStage() {
+
+    currentBlockAnswered = 0;
+
+    nextQuestion();
+
+}
 
 /* =========================
    クイズ終了
@@ -434,7 +491,6 @@ function finishQuiz() {
 
 }
 
-
 /* =========================
    クイズをやめる
 ========================= */
@@ -444,7 +500,6 @@ function quitQuiz() {
     window.location.href = "index.html";
 
 }
-
 
 /* =========================
    Enterキーでも回答
