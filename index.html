@@ -118,12 +118,12 @@ function isPrime(n) {
 // クイズへの誘導を表示する共通関数
 function checkQuizPrompt(next) {
     totalFailCount++;
-    if (totalFailCount >= 10) {
+    if (totalFailCount >= 11) {
         next.innerHTML += `
             <div style="margin-top:20px;">
-                <p>ひまなの？クイズする？</p>
-                <button onclick="startQuiz()">はい</button>
-                <button onclick="noQuiz()">いいえ</button>
+                <p>えっ、ひまなの？クイズする？</p>
+                <button onclick="startQuiz()">やる</button>
+                <button onclick="noQuiz()">いや</button>
             </div>
         `;
         totalFailCount = 0;
@@ -171,7 +171,7 @@ function checkPassword() {
         {val: "831", msg: "野菜"}, {val: "4126", msg: "よい風呂"},
         {val: "141421", msg: "一夜一夜に人見頃、√2ですね！"}, {val: "173205", msg: "人並みにおごれや、√3ですね！"},
         {val: "223606", msg: "富士山麓オウム鳴く、√5ですね！"}, {val: "123", msg: "ヒフミやん..."}, {val: "123123", msg: "ヒフミやん..."},
-        {val: "456", msg: "シゴロが出た！"}, {val: "456456", msg: "シゴロが出た！"}, {val: "0721", msg: "やりますねえ！"},
+        {val: "456", msg: "シゴロが出た！"}, {val: "456456", msg: "シゴロが出たのよ！"}, {val: "0721", msg: "やりますねえ！"},
         {val: "810", msg: "ファッ！？"}, {val: "36", msg: "36…普通だな！"}, {val: "889464", msg: "あくしろよ"},
         {val: "364364", msg: "ホラ、見ろよ見ろよ、ホラ"}, {val: "1", msg: "自然数の始まり"}, {val: "2", msg: "最初の素数"},
         {val: "3", msg: "奇数"}, {val: "6", msg: "完全数！"}, {val: "28", msg: "完全数！"}, {val: "496", msg: "完全数！"},
