@@ -137,14 +137,15 @@ function checkPassword() {
     const next = document.getElementById("next");
     next.innerHTML = "";
 
-    // 45 / 19 系
+       // 45 / 19 系
     let specialMessage = "";
     if (password === "4545") specialMessage = "ヌッ！";
     else if (password === "454545") specialMessage = "ｱｰｲｷｿ";
     else if (password === "1919") specialMessage = "オォン!アォン!";
     else if (password === "191919") specialMessage = "ンアッー!";
 
-    if (/^(45|19)+$/.test(password)) {
+    // 【修正】「19」「45」単体（2回未満の繰り返し）はこの条件にヒットしなくなります
+    if (/^((45|19){2,})+$/.test(password)) {
         ikisugiCount++;
         if (ikisugiCount >= 3) {
             error.textContent = "イキスギィ！";
@@ -157,6 +158,7 @@ function checkPassword() {
         checkQuizPrompt(next);
         return;
     }
+
 
     // 語呂合わせ・数学ネタ等 (ページ遷移しないものすべてに判定を通す)
     const checks = [
