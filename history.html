@@ -35,6 +35,34 @@ button {
     font-size: 16px;
     cursor: pointer;
 }
+
+.history-item {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.history-question {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: none;
+    padding: 15px 5px;
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.history-detail {
+    display: none;
+    text-align: left;
+    padding: 0 5px 20px;
+    line-height: 1.9;
+    white-space: pre-wrap;
+}
+
+.history-item.open .history-detail {
+    display: block;
+}
 </style>
 
 </head>
@@ -74,31 +102,54 @@ if (solvedQuestions.length === 0) {
 
     solvedQuestions.forEach(function(id) {
 
-        const question =
-            questions.find(function(q) {
-                return q.id === id;
-            });
+    const question =
+        questions.find(function(q) {
+            return q.id === id;
+        });
 
-        if (!question) return;
+    if (!question) return;
 
-        const item =
-            document.createElement("div");
+    const item =
+        document.createElement("div");
 
-        item.style.marginBottom = "40px";
+    item.className = "history-item";
 
-        item.innerHTML = `
-            <strong>${question.question}</strong>
-            <p>
+    item.innerHTML = `
+        <button class="history-question">
+            ${question.question} ▾
+        </button>
+
+        <div class="history-detail">
+            <strong>
                 正解：${question.answer.join(" または ")}
-            </p>
+            </strong>
+
             <p>
                 ${question.explanation}
             </p>
-        `;
+        </div>
+    `;
 
-        history.appendChild(item);
+    const questionButton =
+        item.querySelector(".history-question");
+
+    questionButton.addEventListener("click", function() {
+
+        item.classList.toggle("open");
+
+        if (item.classList.contains("open")) {
+            questionButton.textContent =
+                question.question + " ▴";
+        } else {
+            questionButton.textContent =
+                question.question + " ▾";
+        }
 
     });
+
+    history.appendChild(item);
+
+});
 
 }
 
