@@ -1224,4 +1224,6 @@ A0 → A1 → A2 → A3 → A4
 郵便番号は、そんな人間と機械の間をつなぐ数字でもあるんですね。`
 },
 
-];
+];questions.forEach((question, index) => {
+    question.id = index;
+});
