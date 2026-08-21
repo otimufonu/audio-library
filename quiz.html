@@ -90,6 +90,18 @@ button {
     display: none;
 }
 
+#explanationTitle {
+    font-weight: bold;
+    line-height: 1.9;
+    margin-bottom: 15px;
+}
+
+#explanationBody {
+    line-height: 1.9;
+    white-space: pre-wrap;
+    margin-top: 15px;
+}
+
 .start-button {
     font-size: 18px;
     padding: 14px 30px;
@@ -134,7 +146,21 @@ button {
 
     <p id="result"></p>
 
-    <div id="explanation" class="explanation"></div>
+    <div id="explanation" class="explanation">
+
+    <div id="explanationTitle"></div>
+
+    <button
+        id="explanationButton"
+        class="hidden"
+        onclick="toggleExplanation()"
+    >
+        解説を読む
+    </button>
+
+    <div id="explanationBody" class="hidden"></div>
+
+</div>
 
     <button
         id="nextButton"
@@ -308,7 +334,16 @@ function nextQuestion() {
 
     document.getElementById("result").textContent = "";
 
-    document.getElementById("explanation").textContent = "";
+    document.getElementById("explanationTitle").textContent = "";
+
+    document.getElementById("explanationBody").textContent = "";
+
+    document.getElementById("explanationBody").classList.add("hidden");
+
+    document.getElementById("explanationButton").classList.add("hidden");
+
+    document.getElementById("explanationButton").textContent =
+    "解説を読む";
 
     document.getElementById("nextButton").classList.add("hidden");
 
@@ -365,8 +400,21 @@ function checkAnswer() {
 
     }
 
-    document.getElementById("explanation").textContent =
-        currentQuestion.explanation;
+    const explanation =
+    currentQuestion.explanation;
+
+    const explanationLines =
+    explanation.split("\n");
+
+    document.getElementById("explanationTitle").textContent =
+    explanationLines[0];
+
+    document.getElementById("explanationBody").textContent =
+    explanationLines.slice(1).join("\n");
+
+    document.getElementById("explanationButton").classList.remove("hidden");
+
+    document.getElementById("explanationBody").classList.add("hidden");
 
     document.getElementById("nextButton").classList.remove("hidden");
 
@@ -501,6 +549,30 @@ function finishQuiz() {
 function quitQuiz() {
 
     window.location.href = "index.html";
+
+}
+
+function toggleExplanation() {
+
+    const body =
+        document.getElementById("explanationBody");
+
+    const button =
+        document.getElementById("explanationButton");
+
+    if (body.classList.contains("hidden")) {
+
+        body.classList.remove("hidden");
+
+        button.textContent = "解説を閉じる";
+
+    } else {
+
+        body.classList.add("hidden");
+
+        button.textContent = "解説を読む";
+
+    }
 
 }
 
