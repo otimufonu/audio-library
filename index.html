@@ -196,7 +196,16 @@ function checkPassword() {
             return;
         }
     }
-
+    // クイズショートカット
+    if (password === "912") {
+        error.textContent = "クイズする？";
+        next.innerHTML = `
+            <button onclick="startQuiz()">はい</button>
+            <button onclick="noQuizShortcut()">いいえ</button>
+        `;
+        return;
+    }
+    
     // 遷移系
     if (password === "074874") { error.textContent = "いらっしゃいませ"; next.innerHTML = '<a href="audio.html"><button>音源はこちら</button></a>'; return; }
     if (password === "442911") { error.textContent = "いらっしゃいませ"; next.innerHTML = '<a href="shoufuku.html"><button>招福来来ボーイへ</button></a>'; return; }
@@ -232,8 +241,19 @@ function checkPassword() {
     else error.textContent = "それじゃない！よくみて";
 }
 
-function startQuiz() { window.location.href = "quiz.html"; }
-function noQuiz() { document.getElementById("error").textContent = "そうですか……"; document.getElementById("next").innerHTML = ""; }
+function startQuiz() {
+    window.location.href = "quiz.html";
+}
+
+function noQuiz() {
+    document.getElementById("error").textContent = "そうですか……";
+    document.getElementById("next").innerHTML = "";
+}
+
+function noQuizShortcut() {
+    document.getElementById("error").textContent = "ぅふん…!";
+    document.getElementById("next").innerHTML = "";
+}
 </script>
 </body>
 </html>
