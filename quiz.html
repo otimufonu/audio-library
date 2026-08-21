@@ -98,20 +98,19 @@ button {
 #explanationTitle {
     font-weight: bold;
     line-height: 1.9;
-    margin-bottom: 15px;
-}
-
-#explanationButton {
-    display: block;
-    margin: 10px auto 0;
-    font-size: 14px;
-    padding: 8px 16px;
 }
 
 #explanationBody {
     line-height: 1.9;
     white-space: pre-wrap;
-    margin-top: 20px;
+    margin-top: 15px;
+}
+
+#explanationButton {
+    display: block;
+    margin: 15px auto 0;
+    font-size: 14px;
+    padding: 8px 16px;
 }
 
 .start-button {
@@ -162,6 +161,8 @@ button {
 
     <div id="explanationTitle"></div>
 
+    <div id="explanationBody" class="hidden"></div>
+
     <button
         id="explanationButton"
         class="hidden"
@@ -169,8 +170,6 @@ button {
     >
         解説を読む
     </button>
-
-    <div id="explanationBody" class="hidden"></div>
 
 </div>
 
