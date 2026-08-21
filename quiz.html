@@ -219,6 +219,10 @@ let correctAnswers = 0;
 let currentBlockAnswered = 0;
 let finalStage = false;
 
+// 正解した問題を保存
+let solvedQuestions =
+    JSON.parse(localStorage.getItem("solvedQuestions")) || [];
+
 /* =========================
    年に関する問題
 ========================= */
@@ -348,9 +352,20 @@ function checkAnswer() {
     if (correct) {
 
         correctAnswers++;
+        
+        if (!solvedQuestions.includes(currentQuestion.id)) {
+
+    solvedQuestions.push(currentQuestion.id);
+
+    localStorage.setItem(
+        "solvedQuestions",
+        JSON.stringify(solvedQuestions)
+    );
+
+}
 
         result.textContent =
-            "正解！\n" +
+            "アタリ！\n" +
             "正解は " +
             correctAnswerText +
             " です。";
@@ -358,7 +373,7 @@ function checkAnswer() {
     } else {
 
         result.textContent =
-            "残念！\n" +
+            "ザンネン...!\n" +
             "正解は " +
             correctAnswerText +
             " です。";
