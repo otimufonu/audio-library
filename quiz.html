@@ -149,7 +149,7 @@ button {
 <div id="continueScreen" class="hidden">
 
     <div class="stage">
-        <h2>5問終了！</h2>
+        <h2><span id="blockCount"></span>問終了！</h2>
 
         <div class="score" id="score"></div>
 
@@ -405,12 +405,15 @@ function nextAfterExplanation() {
 }
 
 /* =========================
-   5問終了後
+   10問終了後
 ========================= */
 
 function showContinueScreen() {
 
     hideAllScreens();
+
+    document.getElementById("blockCount").textContent =
+        totalAnswered;
 
     const score =
         document.getElementById("score");
