@@ -149,7 +149,7 @@ button {
 <div id="continueScreen" class="hidden">
 
     <div class="stage">
-        <h2>5問終了！</h2>
+        <h2>10問終了！</h2>
 
         <div class="score" id="score"></div>
 
@@ -162,28 +162,6 @@ button {
     </div>
 
 </div>
-
-<div id="finalStageScreen" class="hidden">
-
-    <div class="stage">
-
-        <h2>最終ステージ</h2>
-
-        <p>
-        残りの問題はあと
-        <span id="remainingCount"></span>
-        問です。
-        </p>
-
-        <p>
-        ここから最後まで一気にいきましょう。
-        </p>
-
-        <button class="start-button" onclick="startFinalStage()">
-            進む
-        </button>
-
-    </div>
 
 </div>
 
@@ -219,7 +197,6 @@ let totalAnswered = 0;
 let correctAnswers = 0;
 
 let currentBlockAnswered = 0;
-let finalStage = false;
 
 
 /* =========================
@@ -274,8 +251,7 @@ function startQuiz() {
 
     totalAnswered = 0;
     correctAnswers = 0;
-    currentBlockAnswered = 0;
-    finalStage = false;
+    currentGameAnswered = 0;
 
     hideAllScreens();
 
@@ -344,7 +320,7 @@ function checkAnswer() {
     document.getElementById("answer").disabled = true;
 
     totalAnswered++;
-    currentBlockAnswered++;
+    currentGameAnswered++;
 
     const correct =
         currentQuestion.answer.includes(answer);
@@ -386,24 +362,9 @@ function checkAnswer() {
 
 function nextAfterExplanation() {
 
-    if (!finalStage && currentBlockAnswered < 5) {
+    if (currentGameAnswered < 10) {
 
         nextQuestion();
-
-        return;
-    }
-
-    if (finalStage) {
-
-        if (remainingQuestions.length === 0) {
-
-            finishQuiz();
-
-        } else {
-
-            nextQuestion();
-
-        }
 
         return;
     }
@@ -414,7 +375,7 @@ function nextAfterExplanation() {
 
 
 /* =========================
-   5問終了後
+   10問終了後
 ========================= */
 
 function showContinueScreen() {
@@ -440,11 +401,11 @@ function showContinueScreen() {
 
 function continueQuiz() {
 
-    currentBlockAnswered = 0;
+    currentGameAnswered = 0;
 
-    if (remainingQuestions.length <= 9) {
+    if (remainingQuestions.length === 0) {
 
-        showFinalStage();
+        finishQuiz();
 
         return;
     }
@@ -454,37 +415,6 @@ function continueQuiz() {
 }
 
 
-/* =========================
-   最終ステージ表示
-========================= */
-
-function showFinalStage() {
-
-    hideAllScreens();
-
-    finalStage = true;
-
-    document.getElementById("remainingCount").textContent =
-        remainingQuestions.length;
-
-    document
-        .getElementById("finalStageScreen")
-        .classList.remove("hidden");
-
-}
-
-
-/* =========================
-   最終ステージ開始
-========================= */
-
-function startFinalStage() {
-
-    currentBlockAnswered = 0;
-
-    nextQuestion();
-
-}
 
 
 /* =========================
