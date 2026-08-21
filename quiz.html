@@ -111,9 +111,11 @@ button {
     <div class="description">
         <p>
         数字にまつわるクイズです。<br>
-        解説に雑学があるのでそちらも是非
+        解説に雑学があるのでそちらも是非。
         </p>
     </div>
+    
+    <div id="progress"></div>
 
     <button class="start-button" onclick="startQuiz()">スタート</button>
 
@@ -263,6 +265,15 @@ function hideAllScreens() {
 
 }
 
+function updateProgress() {
+
+    const progress =
+        document.getElementById("progress");
+
+    progress.textContent =
+        solvedQuestions.length + " / " + questions.length;
+}
+
 /* =========================
    クイズ開始
 ========================= */
@@ -280,6 +291,7 @@ function startQuiz() {
 
     nextQuestion();
 
+    updateProgress();
 }
 
 /* =========================
@@ -534,6 +546,8 @@ document
         }
 
     });
+    
+    updateProgress();
 
 </script>
 
