@@ -94,6 +94,16 @@ button {
     color: #666;
 }
 
+#progress button {
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+}
+
 .hidden {
     display: none;
 }
@@ -124,8 +134,9 @@ button {
     </div>
     
     <div id="progress">
-    <span id="progressCount"></span>
-    <button onclick="location.href='history.html'">正解履歴</button>
+    <button onclick="location.href='history.html'">
+        <span id="progressCount"></span> ▾
+    </button>
 </div>
 
     <button class="start-button" onclick="startQuiz()">スタート</button>
@@ -278,10 +289,10 @@ function hideAllScreens() {
 
 function updateProgress() {
 
-    const progress =
-        document.getElementById("progress");
+    const progressCount =
+        document.getElementById("progressCount");
 
-    progress.textContent =
+    progressCount.textContent =
         solvedQuestions.length + " / " + questions.length;
 }
 
