@@ -105,553 +105,133 @@ QRコードの右下にある文字列を入力↑<br>
 let wrongCount = 0;
 let primeCount = 0;
 let ikisugiCount = 0;
+let totalFailCount = 0; // 全失敗回数を記録する変数
 
 function isPrime(n) {
-
-    if (n < 2) {
-        return false;
-    }
-
+    if (n < 2) return false;
     for (let i = 2; i <= Math.sqrt(n); i++) {
-        if (n % i === 0) {
-            return false;
-        }
+        if (n % i === 0) return false;
     }
-
     return true;
 }
 
+// クイズへの誘導を表示する共通関数
+function checkQuizPrompt(next) {
+    totalFailCount++;
+    if (totalFailCount >= 10) {
+        next.innerHTML += `
+            <div style="margin-top:20px;">
+                <p>ひまなの？クイズする？</p>
+                <button onclick="startQuiz()">はい</button>
+                <button onclick="noQuiz()">いいえ</button>
+            </div>
+        `;
+        totalFailCount = 0;
+    }
+}
+
 function checkPassword() {
-
     const password = document.getElementById("password").value;
-
-    // 入力内容を保存したあと、入力欄を空にする
     document.getElementById("password").value = "";
-
     const error = document.getElementById("error");
     const next = document.getElementById("next");
-
-    // 前回表示したボタンを消す
     next.innerHTML = "";
 
-    // --------------------------------
     // 45 / 19 系
-    // --------------------------------
-
     let specialMessage = "";
+    if (password === "4545") specialMessage = "ヌッ！";
+    else if (password === "454545") specialMessage = "ｱｰｲｷｿ";
+    else if (password === "1919") specialMessage = "オォン!アォン!";
+    else if (password === "191919") specialMessage = "ンアッー!";
 
-    if (password === "4545") {
-        specialMessage = "ヌッ！";
-
-    } else if (password === "454545") {
-        specialMessage = "ｱｰｲｷｿ";
-
-    } else if (password === "1919") {
-        specialMessage = "オォン!アォン!";
-
-    } else if (password === "191919") {
-        specialMessage = "ンアッー!";
-
-    }
-
-    // 45と19のみで構成された入力は1カウント
     if (/^(45|19)+$/.test(password)) {
-
         ikisugiCount++;
-
         if (ikisugiCount >= 3) {
             error.textContent = "イキスギィ！";
             ikisugiCount = 0;
-
         } else if (specialMessage !== "") {
             error.textContent = specialMessage;
-
         } else {
             error.textContent = "";
         }
-
+        checkQuizPrompt(next);
         return;
     }
 
-    // --------------------------------
-    // 語呂合わせ
-    // --------------------------------
-
-    if (password === "2525") {
-        error.textContent = "ニコニコ";
-        return;
-    }
-
-    if (password === "4649") {
-        error.textContent = "よろしく";
-        return;
-    }
-
-    if (password === "5963") {
-        error.textContent = "ご苦労さん";
-        return;
-    }
-
-    if (password === "39") {
-        error.textContent = "サンキュー";
-        return;
-    }
-
-    if (password === "3150") {
-        error.textContent = "最高";
-        return;
-    }
-
-    if (password === "14106") {
-        error.textContent = "愛してる";
-        return;
-    }
-
-    if (password === "110") {
-        error.textContent = "おまわりさん？";
-        return;
-    }
-
-    if (password === "119") {
-        error.textContent = "救急車？";
-        return;
-    }
-
-    if (password === "1192") {
-        error.textContent = "いいハコじゃないの？";
-        return;
-    }
-
-    if (password === "1185") {
-        error.textContent = "いいクニじゃないの？";
-        return;
-    }
-
-    if (password === "710") {
-        error.textContent = "納豆？";
-        return;
-    }
-
-    if (password === "801") {
-        error.textContent = "やおい";
-        return;
-    }
-
-    if (password === "831") {
-        error.textContent = "野菜";
-        return;
-    }
-
-    if (password === "4126") {
-        error.textContent = "よい風呂";
-        return;
-    }
-    
-    // --------------------------------
-// √n 語呂合わせ
-// --------------------------------
-
-if (password === "141421") {
-    error.textContent = "一夜一夜に人見頃、√2ですね！";
-    return;
-}
-
-if (password === "173205") {
-    error.textContent = "人並みにおごれや、√3ですね！";
-    return;
-}
-
-if (password === "223606") {
-    error.textContent = "富士山麓オウム鳴く、√5ですね！";
-    return;
-}
-
-    // --------------------------------
-    // その他の数字ネタ
-    // --------------------------------
-
-    if (
-        password === "123" ||
-        password === "123123"
-    ) {
-        error.textContent = "ヒフミやん...";
-        return;
-    }
-
-    if (
-        password === "456" ||
-        password === "456456"
-    ) {
-        error.textContent = "シゴロが出た！";
-        return;
-    }
-
-    if (password === "0721") {
-        error.textContent = "やりますねえ！";
-        return;
-    }
-
-    if (password === "810") {
-        error.textContent = "ファッ！？";
-        return;
-    }
-
-    if (password === "36") {
-        error.textContent = "36…普通だな！";
-        return;
-    }
-
-    if (password === "889464") {
-        error.textContent = "あくしろよ";
-        return;
-    }
-
-    if (password === "364364") {
-        error.textContent = "ホラ、見ろよ見ろよ、ホラ";
-        return;
-    }
-
-    // --------------------------------
-    // 音源ページ
-    // --------------------------------
-
-    if (password === "074874") {
-        error.textContent = "いらっしゃいませ";
-        next.innerHTML =
-            '<a href="audio.html"><button>音源はこちら</button></a>';
-        return;
-    }
-
-    // --------------------------------
-    // 招福来来ボーイ
-    // --------------------------------
-
-    if (password === "442911") {
-        error.textContent = "いらっしゃいませ";
-        next.innerHTML =
-            '<a href="shoufuku.html"><button>招福来来ボーイへ</button></a>';
-        return;
-    }
-
-    // --------------------------------
-    // 丸美焼肉店
-    // --------------------------------
-
-    if (password === "843811") {
-        error.textContent = "いらっしゃいませ";
-        next.innerHTML =
-            '<a href="https://share.google/zcnrAHNT6O7MTd5ax" target="_blank"><button>丸美焼肉店へ</button></a>';
-        return;
-    }
-
-    // --------------------------------
-    // 114514
-    // --------------------------------
-
-    if (password === "114514") {
-        error.textContent = "入って、どうぞ";
-        next.innerHTML =
-            '<a href="https://youtu.be/niKAylKNIEI?si=tJOFKXD7AdBn0QUQ" target="_blank"><button>こ↑こ↓</button></a>';
-        return;
-    }
-
-    // --------------------------------
-    // 数学ネタ
-    // --------------------------------
-
-    if (password === "1") {
-        error.textContent = "自然数の始まり";
-        return;
-    }
-
-    if (password === "2") {
-        error.textContent = "最初の素数";
-        return;
-    }
-
-    if (password === "3") {
-        error.textContent = "奇数";
-        return;
-    }
-
-    // 完全数
-    if (
-        password === "6" ||
-        password === "28" ||
-        password === "496" ||
-        password === "8128"
-    ) {
-        error.textContent = "完全数！";
-        return;
-    }
-
-    if (password === "11") {
-        error.textContent = "ゾロ目";
-        return;
-    }
-
-    if (password === "22") {
-        error.textContent = "素数じゃない";
-        return;
-    }
-
-    if (password === "111") {
-        error.textContent = "三桁ゾロ目";
-        return;
-    }
-
-    if (password === "121") {
-        error.textContent = "平方数！";
-        return;
-    }
-
-    if (password === "144") {
-        error.textContent = "12²でしょう";
-        return;
-    }
-
-    if (password === "169") {
-        error.textContent = "13²でしょう";
-        return;
-    }
-
-    if (password === "196") {
-        error.textContent = "14²でしょう";
-        return;
-    }
-
-    if (password === "225") {
-        error.textContent = "15²でしょう";
-        return;
-    }
-
-    if (password === "343") {
-        error.textContent = "7³でしょう";
-        return;
-    }
-
-    if (password === "1024") {
-        error.textContent = "2の10乗！！";
-        return;
-    }
-
-    // --------------------------------
-    // 2のn乗
-    // --------------------------------
-
-    const powerNumber = Number(password);
-
-    if (
-        password !== "" &&
-        powerNumber >= 2 &&
-        Number.isInteger(Math.log2(powerNumber))
-    ) {
-        const exponent = Math.log2(powerNumber);
-
-        error.textContent = `2の${exponent}乗ですね！`;
-        return;
-    }
-// --------------------------------
-// 3のn乗
-// --------------------------------
-
-const powerOfThree = Math.log(Number(password)) / Math.log(3);
-
-if (
-    password !== "" &&
-    Number(password) > 0 &&
-    Number.isInteger(powerOfThree)
-) {
-    error.textContent = `3の${powerOfThree}乗ですね！`;
-    return;
-}
-
-    // --------------------------------
-    // その他の数学ネタ
-    // --------------------------------
-
-    if (password === "999983") {
-        error.textContent = "6桁で最大の素数だ！わーい！";
-        return;
-    }
-
-    if (password === "314159") {
-        error.textContent = "π……？";
-        return;
-    }
-
-    if (password === "271828") {
-        error.textContent = "e……？";
-        return;
-    }
-
-    if (password === "161803") {
-        error.textContent = "黄金比だ！";
-        return;
-    }
-
-    if (password === "112358") {
-        error.textContent = "フィボナッチ！";
-        return;
-    }
-
-    if (password === "142857") {
-        error.textContent = "循環してる！";
-        return;
-    }
-
-    // --------------------------------
-    // 昇順の階段
-    // --------------------------------
-
-    if (
-        password === "123456" ||
-        password === "234567" ||
-        password === "345678" ||
-        password === "456789"
-    ) {
-        error.textContent = "階段やん";
-        return;
-    }
-
-    // --------------------------------
-    // 降順の階段
-    // --------------------------------
-
-    if (
-        password === "654321" ||
-        password === "765432" ||
-        password === "876543" ||
-        password === "987654"
-    ) {
-        error.textContent = "降りてるやん";
-        return;
-    }
-
-    // --------------------------------
-    // ゾロ目
-    // --------------------------------
-
-    if (password === "111111") {
-        error.textContent = "ピンゾロ！！！";
-        return;
-    }
-
-    if (
-        password === "222222" ||
-        password === "333333" ||
-        password === "444444" ||
-        password === "555555" ||
-        password === "666666"
-    ) {
-        error.textContent = "アラシ3倍！";
-        return;
-    }
-
-    if (password === "777777") {
-        error.textContent = "めでたいですね";
-        return;
-    }
-
-    if (password === "888888") {
-        error.textContent = "ヤンキーの車番じゃないんだから";
-        return;
-    }
-
-    if (password === "999999") {
-        error.textContent = "やり直し";
-        return;
-    }
-
-    // --------------------------------
-    // その他の素数
-    // --------------------------------
-
-    const number = Number(password);
-
-    if (password !== "" && isPrime(number)) {
-
-        primeCount++;
-
-        if (primeCount >= 3) {
-            error.textContent = "素数ばっか探してないでさ";
-        } else {
-            error.textContent = "素数だ！わーい";
+    // 語呂合わせ・数学ネタ等 (ページ遷移しないものすべてに判定を通す)
+    const checks = [
+        {val: "2525", msg: "ニコニコ"}, {val: "4649", msg: "よろしく"},
+        {val: "5963", msg: "ご苦労さん"}, {val: "39", msg: "サンキュー"},
+        {val: "3150", msg: "最高"}, {val: "14106", msg: "愛してる"},
+        {val: "110", msg: "おまわりさん？"}, {val: "119", msg: "救急車？"},
+        {val: "1192", msg: "いいハコじゃないの？"}, {val: "1185", msg: "いいクニじゃないの？"},
+        {val: "710", msg: "納豆？"}, {val: "801", msg: "やおい"},
+        {val: "831", msg: "野菜"}, {val: "4126", msg: "よい風呂"},
+        {val: "141421", msg: "一夜一夜に人見頃、√2ですね！"}, {val: "173205", msg: "人並みにおごれや、√3ですね！"},
+        {val: "223606", msg: "富士山麓オウム鳴く、√5ですね！"}, {val: "123", msg: "ヒフミやん..."}, {val: "123123", msg: "ヒフミやん..."},
+        {val: "456", msg: "シゴロが出た！"}, {val: "456456", msg: "シゴロが出た！"}, {val: "0721", msg: "やりますねえ！"},
+        {val: "810", msg: "ファッ！？"}, {val: "36", msg: "36…普通だな！"}, {val: "889464", msg: "あくしろよ"},
+        {val: "364364", msg: "ホラ、見ろよ見ろよ、ホラ"}, {val: "1", msg: "自然数の始まり"}, {val: "2", msg: "最初の素数"},
+        {val: "3", msg: "奇数"}, {val: "6", msg: "完全数！"}, {val: "28", msg: "完全数！"}, {val: "496", msg: "完全数！"},
+        {val: "8128", msg: "完全数！"}, {val: "11", msg: "ゾロ目"}, {val: "22", msg: "素数じゃない"},
+        {val: "111", msg: "三桁ゾロ目"}, {val: "121", msg: "平方数！"}, {val: "144", msg: "12²でしょう"},
+        {val: "169", msg: "13²でしょう"}, {val: "196", msg: "14²でしょう"}, {val: "225", msg: "15²でしょう"},
+        {val: "343", msg: "7³でしょう"}, {val: "1024", msg: "2の10乗！！"}, {val: "999983", msg: "6桁で最大の素数だ！わーい！"},
+        {val: "314159", msg: "π……？"}, {val: "271828", msg: "e……？"}, {val: "161803", msg: "黄金比だ！"},
+        {val: "112358", msg: "フィボナッチ！"}, {val: "142857", msg: "循環してる！"}, {val: "123456", msg: "階段やん"},
+        {val: "234567", msg: "階段やん"}, {val: "345678", msg: "階段やん"}, {val: "456789", msg: "階段やん"},
+        {val: "654321", msg: "降りてるやん"}, {val: "765432", msg: "降りてるやん"}, {val: "876543", msg: "降りてるやん"},
+        {val: "987654", msg: "降りてるやん"}, {val: "111111", msg: "ピンゾロ！！！"}, {val: "222222", msg: "アラシ3倍！"},
+        {val: "333333", msg: "アラシ3倍！"}, {val: "444444", msg: "アラシ3倍！"}, {val: "555555", msg: "アラシ3倍！"},
+        {val: "666666", msg: "アラシ3倍！"}, {val: "777777", msg: "めでたいですね"}, {val: "888888", msg: "ヤンキーの車番じゃないんだから"},
+        {val: "999999", msg: "やり直し"}
+    ];
+
+    for (let c of checks) {
+        if (password === c.val) {
+            error.textContent = c.msg;
+            checkQuizPrompt(next);
+            return;
         }
+    }
 
+    // 遷移系
+    if (password === "074874") { error.textContent = "いらっしゃいませ"; next.innerHTML = '<a href="audio.html"><button>音源はこちら</button></a>'; return; }
+    if (password === "442911") { error.textContent = "いらっしゃいませ"; next.innerHTML = '<a href="shoufuku.html"><button>招福来来ボーイへ</button></a>'; return; }
+    if (password === "843811") { error.textContent = "いらっしゃいませ"; next.innerHTML = '<a href="https://share.google/zcnrAHNT6O7MTd5ax" target="_blank"><button>丸美焼肉店へ</button></a>'; return; }
+    if (password === "114514") { error.textContent = "入って、どうぞ"; next.innerHTML = '<a href="https://youtu.be/niKAylKNIEI?si=tJOFKXD7AdBn0QUQ" target="_blank"><button>こ↑こ↓</button></a>'; return; }
+
+    // 累乗系
+    const pNum = Number(password);
+    if (password !== "" && pNum >= 2 && Number.isInteger(Math.log2(pNum))) { error.textContent = `2の${Math.log2(pNum)}乗ですね！`; checkQuizPrompt(next); return; }
+    const pThree = Math.log(pNum) / Math.log(3);
+    if (password !== "" && pNum > 0 && Number.isInteger(pThree)) { error.textContent = `3の${pThree}乗ですね！`; checkQuizPrompt(next); return; }
+
+    // 素数
+    if (password !== "" && isPrime(pNum)) {
+        primeCount++;
+        error.textContent = (primeCount >= 3) ? "素数ばっか探してないでさ" : "素数だ！わーい";
+        checkQuizPrompt(next);
         return;
     }
 
-    // --------------------------------
-    // ここまで来たらページ遷移しなかったのでカウント
-    // --------------------------------
-
+    // 最後の砦
     wrongCount++;
-
-    // 000000はカウントしたうえで特別扱い
-    if (password === "000000") {
-        error.textContent = "そんなわけない";
-        return;
-    }
-
-    // --------------------------------
-    // その他の入力
-    // --------------------------------
-
-    if (wrongCount === 3) {
-        error.textContent = "またちがうやん";
-
-    } else if (wrongCount === 4) {
-        error.textContent = "えっ？";
-
-    } else if (wrongCount === 5) {
-        error.textContent = "そろそろ…";
-
-    } else if (wrongCount === 6) {
-        error.textContent = "おちついて！";
-
-    } else if (wrongCount === 7) {
-        error.textContent = "ガンバレ、ガンバレ";
-
-    } else if (wrongCount === 8) {
-        error.textContent = "ほんとにCDみてる？";
-
-    } else if (wrongCount === 9) {
-        error.textContent = "教えてあげようか？";
-
-    } else if (wrongCount === 10) {
-        error.textContent =
-            "じゃあ一つだけ。「843811」入力して";
-
-    } else if (wrongCount === 11) {
-
-        error.textContent = "ひまなの？クイズする？";
-
-        next.innerHTML = `
-            <button onclick="startQuiz()">はい</button>
-            <button onclick="noQuiz()">いいえ</button>
-        `;
-
-        wrongCount = 0;
-
-    } else {
-        error.textContent = "それじゃない！よくみて";
-    }
+    checkQuizPrompt(next);
+    if (password === "000000") { error.textContent = "そんなわけない"; return; }
+    if (wrongCount === 3) error.textContent = "またちがうやん";
+    else if (wrongCount === 4) error.textContent = "えっ？";
+    else if (wrongCount === 5) error.textContent = "そろそろ…";
+    else if (wrongCount === 6) error.textContent = "おちついて！";
+    else if (wrongCount === 7) error.textContent = "ガンバレ、ガンバレ";
+    else if (wrongCount === 8) error.textContent = "ほんとにCDみてる？";
+    else if (wrongCount === 9) error.textContent = "教えてあげようか？";
+    else if (wrongCount === 10) error.textContent = "じゃあ一つだけ。「843811」入力して";
+    else error.textContent = "それじゃない！よくみて";
 }
 
-function startQuiz() {
-    window.location.href = "quiz.html";
-}
-
-function noQuiz() {
-    const error = document.getElementById("error");
-    const next = document.getElementById("next");
-
-    error.textContent = "そうですか……";
-    next.innerHTML = "";
-}
-
+function startQuiz() { window.location.href = "quiz.html"; }
+function noQuiz() { document.getElementById("error").textContent = "そうですか……"; document.getElementById("next").innerHTML = ""; }
 </script>
-
 </body>
 </html>
