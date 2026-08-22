@@ -106,6 +106,69 @@ let wrongCount = 0;
 let primeCount = 0;
 let ikisugiCount = 0;
 let totalFailCount = 0; // 全失敗回数を記録する変数
+let birthdayDenied = false;
+function isDateLike(value) {
+    if (!/^\d{4}$/.test(value)) return false;
+
+    const month = Number(value.slice(0, 2));
+    const day = Number(value.slice(2, 4));
+
+    if (month < 1 || month > 12) return false;
+
+    const lastDay = new Date(2024, month, 0).getDate();
+
+    return day >= 1 && day <= lastDay;
+}
+
+function askBirthday(password) {
+    const error = document.getElementById("error");
+    const next = document.getElementById("next");
+
+    error.textContent = "もしかして誕生日？";
+
+    next.innerHTML = `
+        <button onclick="birthdayYes()">はい</button>
+        <button onclick="birthdayNo('${password}')">いいえ</button>
+    `;
+}
+
+function birthdayYes() {
+    const error = document.getElementById("error");
+    const next = document.getElementById("next");
+
+    error.textContent =
+        "そうなんや、おめでとう！次の誕生日で何歳になるの？";
+
+    next.innerHTML = `
+        <input
+            type="number"
+            id="ageInput"
+            min="0"
+            max="150"
+            inputmode="numeric"
+        >
+        <button onclick="submitAge()">ENTER</button>
+    `;
+}
+
+function submitAge() {
+    const age = document.getElementById("ageInput").value;
+    const error = document.getElementById("error");
+    const next = document.getElementById("next");
+
+    if (age === "") {
+        error.textContent = "年齢を入力してね";
+        return;
+    }
+
+    error.textContent = `${age}歳になるんやね！`;
+    next.innerHTML = "";
+}
+
+function birthdayNo(password) {
+    birthdayDenied = true;
+    checkPassword(password);
+}
 
 function isPrime(n) {
     if (n < 2) return false;
@@ -136,6 +199,14 @@ function checkPassword() {
     const error = document.getElementById("error");
     const next = document.getElementById("next");
     next.innerHTML = "";
+
+    if (!birthdayDenied && isDateLike(password)) {
+        askBirthday(password);
+        return;
+    }
+
+    const addJaa = birthdayDenied;
+    birthdayDenied = false;
 
        // 45 / 19 系
     let specialMessage = "";
@@ -191,14 +262,15 @@ function checkPassword() {
 
     for (let c of checks) {
         if (password === c.val) {
-            error.textContent = c.msg;
+            error.textContent = addJaa ? "じゃあ" + c.msg : c.msg;
             checkQuizPrompt(next);
             return;
         }
     }
     // クイズショートカット
     if (password === "912") {
-        error.textContent = "クイズする？";
+        if (password === "912") {
+    error.textContent = addJaa ? "じゃあクイズする？" : "クイズする？";
         next.innerHTML = `
             <button onclick="startQuiz()">はい</button>
             <button onclick="noQuizShortcut()">いいえ</button>
@@ -214,14 +286,22 @@ function checkPassword() {
 
     // 累乗系
     const pNum = Number(password);
-    if (password !== "" && pNum >= 2 && Number.isInteger(Math.log2(pNum))) { error.textContent = `2の${Math.log2(pNum)}乗ですね！`; checkQuizPrompt(next); return; }
+    if (password !== "" && pNum >= 2 && Number.isInteger(Math.log2(pNum))) { error.textContent = addJaa
+    ? "じゃあ" + `2の${Math.log2(pNum)}乗ですね！`
+    : `2の${Math.log2(pNum)}乗ですね！`; checkQuizPrompt(next); return; }
     const pThree = Math.log(pNum) / Math.log(3);
-    if (password !== "" && pNum > 0 && Number.isInteger(pThree)) { error.textContent = `3の${pThree}乗ですね！`; checkQuizPrompt(next); return; }
+    if (password !== "" && pNum > 0 && Number.isInteger(pThree)) { error.textContent = addJaa
+    ? "じゃあ" + `3の${pThree}乗ですね！`
+    : `3の${pThree}乗ですね！`; checkQuizPrompt(next); return; }
 
     // 素数
     if (password !== "" && isPrime(pNum)) {
         primeCount++;
-        error.textContent = (primeCount >= 3) ? "素数ばっか探してないでさ" : "素数だ！わーい";
+        const message = (primeCount >= 3)
+    ? "素数ばっか探してないでさ"
+    : "素数だ！わーい";
+
+error.textContent = addJaa ? "じゃあ" + message : message;
         checkQuizPrompt(next);
         return;
     }
@@ -229,18 +309,45 @@ function checkPassword() {
     // 最後の砦
     wrongCount++;
     checkQuizPrompt(next);
-    if (password === "000000") { error.textContent = "そんなわけない"; return; }
-    if (wrongCount === 3) error.textContent = "またちがうやん";
-    else if (wrongCount === 4) error.textContent = "えっ？";
-    else if (wrongCount === 5) error.textContent = "そろそろ…";
-    else if (wrongCount === 6) error.textContent = "おちついて！";
-    else if (wrongCount === 7) error.textContent = "ガンバレ、ガンバレ";
-    else if (wrongCount === 8) error.textContent = "ほんとにCDみてる？";
-    else if (wrongCount === 9) error.textContent = "教えてあげようか？";
-    else if (wrongCount === 10) error.textContent = "じゃあ一つだけ。「843811」入力して";
-    else error.textContent = "それじゃない！よくみて";
+    if (password === "000000") {
+    error.textContent = addJaa
+        ? "じゃあそんなわけない"
+        : "そんなわけない";
+    return;
 }
 
+if (wrongCount === 3) {
+    error.textContent = addJaa ? "じゃあまたちがうやん" : "またちがうやん";
+}
+else if (wrongCount === 4) {
+    error.textContent = addJaa ? "じゃあえっ？" : "えっ？";
+}
+else if (wrongCount === 5) {
+    error.textContent = addJaa ? "じゃあそろそろ…" : "そろそろ…";
+}
+else if (wrongCount === 6) {
+    error.textContent = addJaa ? "じゃあおちついて！" : "おちついて！";
+}
+else if (wrongCount === 7) {
+    error.textContent = addJaa ? "じゃあガンバレ、ガンバレ" : "ガンバレ、ガンバレ";
+}
+else if (wrongCount === 8) {
+    error.textContent = addJaa ? "じゃあほんとにCDみてる？" : "ほんとにCDみてる？";
+}
+else if (wrongCount === 9) {
+    error.textContent = addJaa ? "じゃあ教えてあげようか？" : "教えてあげようか？";
+}
+else if (wrongCount === 10) {
+    error.textContent = addJaa
+        ? "じゃあこれはどう？「843811」入力して"
+        : "じゃあ一つだけ。「843811」入力して";
+}
+else {
+    error.textContent = addJaa
+        ? "じゃあそれじゃない！よくみて"
+        : "それじゃない！よくみて";
+}
+}
 function startQuiz() {
     window.location.href = "quiz.html";
 }
