@@ -139,7 +139,11 @@ button {
     </button>
 </div>
 
-    <button class="start-button" onclick="startQuiz()">スタート</button>
+<button class="start-button" onclick="startChallenge()">挑戦</button>
+
+<button class="start-button" onclick="startReview()">復習</button>
+
+<button class="start-button" onclick="startAll()">総当</button>
 
 </div>
 
@@ -300,10 +304,10 @@ function updateProgress() {
    クイズ開始
 ========================= */
 
-function startQuiz() {
+function startChallenge() {
 
-    remainingQuestions = questions.filter(function(q) {
-        return !solvedQuestions.includes(q.id);
+    remainingQuestions = questions.filter(function(question) {
+        return !solvedQuestions.includes(question.id);
     });
 
     totalAnswered = 0;
@@ -311,12 +315,48 @@ function startQuiz() {
     currentBlockAnswered = 0;
     finalStage = false;
 
+    if (remainingQuestions.length === 0) {
+        alert("挑戦できる問題はありません。");
+        return;
+    }
+
     hideAllScreens();
-
     nextQuestion();
-
-    updateProgress();
 }
+
+function startReview() {
+
+    remainingQuestions = questions.filter(function(question) {
+        return solvedQuestions.includes(question.id);
+    });
+
+    totalAnswered = 0;
+    correctAnswers = 0;
+    currentBlockAnswered = 0;
+    finalStage = false;
+
+    if (remainingQuestions.length === 0) {
+        alert("まだ復習できる問題はありません。");
+        return;
+    }
+
+    hideAllScreens();
+    nextQuestion();
+}
+
+function startAll() {
+
+    remainingQuestions = [...questions];
+
+    totalAnswered = 0;
+    correctAnswers = 0;
+    currentBlockAnswered = 0;
+    finalStage = false;
+
+    hideAllScreens();
+    nextQuestion();
+}
+
 
 /* =========================
    問題をランダムに取り出す
