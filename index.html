@@ -134,8 +134,8 @@ function askBirthday(password) {
 
 function birthdayYes() {
     const error = document.getElementById("error");
-    const next = document.getElementById("next");
     const passwordInput = document.getElementById("password");
+    const enterButton = document.querySelector('button[onclick="checkPassword()"]');
 
     error.textContent =
         "そうなんや、おめでとう！次の誕生日で何歳になるの？";
@@ -144,16 +144,14 @@ function birthdayYes() {
     passwordInput.value = "";
     passwordInput.placeholder = "年齢を入力";
 
-    next.innerHTML = `
-        <button onclick="submitAge()">ENTER</button>
-    `;
+    enterButton.onclick = submitAge;
 }
 
 function submitAge() {
     const age = document.getElementById("password").value;
     const error = document.getElementById("error");
-    const next = document.getElementById("next");
     const passwordInput = document.getElementById("password");
+    const enterButton = document.querySelector('button[onclick="submitAge()"]');
 
     if (age === "") {
         error.textContent = "年齢を入力してね";
@@ -166,7 +164,7 @@ function submitAge() {
     passwordInput.type = "password";
     passwordInput.placeholder = "";
 
-    next.innerHTML = "";
+    enterButton.onclick = checkPassword;
 }
 
 function birthdayNo(password) {
