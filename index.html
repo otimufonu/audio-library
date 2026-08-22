@@ -94,7 +94,7 @@ QRコードの右下にある文字列を入力↑<br>
     maxlength="6"
 >
 
-<button onclick="checkPassword()">ENTER</button>
+<button id="enterButton" onclick="checkPassword()">ENTER</button>
 
 <p id="error"></p>
 
@@ -134,11 +134,14 @@ function askBirthday(password) {
 
 function birthdayYes() {
     const error = document.getElementById("error");
+    const next = document.getElementById("next");
     const passwordInput = document.getElementById("password");
-    const enterButton = document.querySelector('button[onclick="checkPassword()"]');
+    const enterButton = document.getElementById("enterButton");
 
     error.textContent =
         "そうなんや、おめでとう！次の誕生日で何歳になるの？";
+
+    next.innerHTML = "";
 
     passwordInput.type = "number";
     passwordInput.value = "";
@@ -151,7 +154,7 @@ function submitAge() {
     const age = document.getElementById("password").value;
     const error = document.getElementById("error");
     const passwordInput = document.getElementById("password");
-    const enterButton = document.querySelector('button[onclick="submitAge()"]');
+    const enterButton = document.getElementById("enterButton");
 
     if (age === "") {
         error.textContent = "年齢を入力してね";
