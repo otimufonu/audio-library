@@ -135,26 +135,25 @@ function askBirthday(password) {
 function birthdayYes() {
     const error = document.getElementById("error");
     const next = document.getElementById("next");
+    const passwordInput = document.getElementById("password");
 
     error.textContent =
         "そうなんや、おめでとう！次の誕生日で何歳になるの？";
 
+    passwordInput.type = "number";
+    passwordInput.value = "";
+    passwordInput.placeholder = "年齢を入力";
+
     next.innerHTML = `
-        <input
-            type="number"
-            id="ageInput"
-            min="0"
-            max="150"
-            inputmode="numeric"
-        >
         <button onclick="submitAge()">ENTER</button>
     `;
 }
 
 function submitAge() {
-    const age = document.getElementById("ageInput").value;
+    const age = document.getElementById("password").value;
     const error = document.getElementById("error");
     const next = document.getElementById("next");
+    const passwordInput = document.getElementById("password");
 
     if (age === "") {
         error.textContent = "年齢を入力してね";
@@ -162,6 +161,11 @@ function submitAge() {
     }
 
     error.textContent = `${age}歳になるんやね！`;
+
+    passwordInput.value = "";
+    passwordInput.type = "password";
+    passwordInput.placeholder = "";
+
     next.innerHTML = "";
 }
 
