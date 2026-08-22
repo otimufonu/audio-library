@@ -116,6 +116,19 @@ button {
 .choice-button {
     min-width: 100px;
 }
+
+.quit-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    border: none;
+    background: none;
+    padding: 5px;
+    margin: 0;
+    font-size: 14px;
+    color: #999;
+}
+
 </style>
 
 </head>
@@ -148,6 +161,13 @@ button {
 </div>
 
 <div id="quizScreen" class="hidden">
+    
+    <button
+    class="quit-button"
+    onclick="quitDuringQuiz()"
+>
+    逃げる
+</button>
 
     <div class="question" id="question"></div>
 
@@ -592,6 +612,19 @@ function finishQuiz() {
 function quitQuiz() {
 
     window.location.href = "index.html";
+
+}
+
+function quitDuringQuiz() {
+
+    const confirmQuit =
+        confirm("クイズをやめますか？");
+
+    if (confirmQuit) {
+
+        window.location.href = "index.html";
+
+    }
 
 }
 
